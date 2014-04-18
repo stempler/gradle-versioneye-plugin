@@ -1,0 +1,127 @@
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'eclipse'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+group = 'org.standardout'
+version = '0.1-SNAPSHOT'
+
+jar {
+	// include license into jar
+	into 'META-INF', {
+		from 'LICENSE'
+	}
+}
+
+dependencies {
+	compile gradleApi()
+	compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+	compile 'org.apache.httpcomponents:httpmime:4.2.1'
+	compile localGroovy()
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.11'
+}
+
+// package groovydoc into a jar file
+task packageJavadoc(type: Jar, dependsOn: 'groovydoc') {
+	from groovydoc.destinationDir
+	classifier = 'javadoc'
+}
+
+// package source into a jar file
+task packageSources(type: Jar) {
+	from sourceSets.main.allSource
+	classifier = 'sources'
+}
+
+// define artifacts for upload
+artifacts {
+	archives jar
+	archives packageJavadoc
+	archives packageSources
+}
+
+def configurePom(def pom) {
+	// ensure correct artifact ID
+	pom.artifactId = 'gradle-versioneye-plugin'
+	
+	// pom file details
+	pom.project {
+	   name 'gradle-versioneye-plugin'
+	   packaging 'jar'
+	   description 'Check your Gradle project dependencies with www.versioneye.com'
+	   url 'https://github.com/stempler/gradle-versioneye-plugin'
+
+	   scm {
+		   url 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
+		   connection 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
+		   developerConnection 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
+	   }
+
+	   licenses {
+		   license {
+			   name 'The MIT License (MIT)'
+			   url 'http://opensource.org/licenses/MIT'
+			   distribution 'repo'
+		   }
+	   }
+
+	   developers {
+		   developer {
+			   id 'stempler'
+			   name 'Simon Templer'
+			   email 'simon@templer.cc'
+		   }
+	   }
+   }
+}
+
+install {
+	repositories.mavenInstaller {
+		// ensure correct artifact ID when installing locally
+		configurePom(pom)
+	}
+}
+
+// sign all artifacts
+signing {
+	required { gradle.taskGraph.hasTask(uploadArchives) }
+	sign configurations.archives
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			// sign artifacts before upload
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+			
+			// upload to sonatype OSS (release)
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+				authentication(userName: this.hasProperty('sonatypeUsername') ? sonatypeUsername : '',
+					password: this.hasProperty('sonatypePassword') ? sonatypePassword : '')
+			}
+			
+			configurePom(pom)
+		}
+	}
+}
+
+// groovydoc task work-around
+
+configurations {
+	jansi.extendsFrom(runtime)
+}
+groovydoc {
+	groovyClasspath = project.configurations.jansi
+}
+dependencies {
+	jansi 'org.fusesource.jansi:jansi:1.11'
+}
