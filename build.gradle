@@ -21,7 +21,18 @@ jar {
 
 dependencies {
 	compile gradleApi()
-	compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+	compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', {
+		// Only needed for HTML parsing
+		exclude group: 'net.sourceforge.nekohtml', module: 'nekohtml'
+		// Add this dependency if you are using OAuth in HTTPBuilder or RESTClient
+		exclude group: 'oauth.signpost', module: 'signpost-commonshttp4'
+		// Add this dependency if you are using OAuth in HttpURLClient
+		exclude group: 'oauth.signpost', module: 'signpost-core'
+		
+		// try to do without
+		exclude group: 'com.google.appengine'
+		exclude group: 'xerces', module: 'xercesImpl'
+	}
 	compile 'org.apache.httpcomponents:httpmime:4.3.3'
 	compile localGroovy()
 }
