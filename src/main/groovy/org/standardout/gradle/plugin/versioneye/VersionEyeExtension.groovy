@@ -33,12 +33,42 @@ import org.gradle.api.Project;
  */
 class VersionEyeExtension {
 	
+	// dependencies values
+	public static final String transitive = 'transitive'
+	public static final String declared = 'declared'
+	
 	final Project project
 	
 	VersionEyeExtension(Project project) {
 		this.project = project
 	}
 	
-	//TODO allow configuration, e.g. which configurations should be used (default: all) 
+	/**
+	 * States which dependencies are analyzed - only the defined or all resolved dependencies.
+	 */
+	String dependencies = declared
+	
+	/**
+	 * Configuration to exclude when calculating the dependencies.
+	 */
+	final Set<String> excludeConfigurations = new HashSet<String>()
+	
+	/**
+	 * Specify configurations to exclude.
+	 */
+	void exclude(String... configs) {
+		(configs as List).each {
+			excludeConfigurations << it
+		}
+	}
+	
+	// internal
+	
+	/**
+	 * Test if the given configuration should be excluded.
+	 */
+	boolean acceptConfiguration(String name) {
+		!excludeConfigurations.contains(name)
+	}
 
 }

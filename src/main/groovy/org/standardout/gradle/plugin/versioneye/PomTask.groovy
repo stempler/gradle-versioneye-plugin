@@ -28,6 +28,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
+import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskAction;
 
@@ -54,13 +55,36 @@ class PomTask extends DefaultTask {
 	def create() {
 		assert file as File
 		
-		def artifacts = project.configurations.names.collect { String name ->
-			//TODO check if configuration should be included
-			def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
-			// retrieve all external dependencies
-			//XXX we are ignoring the dependency relations here - does it matter for VersionEye?
-			resolvedConfig.lenientConfiguration.getArtifacts(EXTERNAL_DEPENDENCY)
-		}.flatten() as Set
+		def artifacts
+		if (project.versioneye.dependencies == VersionEyeExtension.transitive) {
+			// transitive dependencies: use all resolved artifacts
+			
+			artifacts = project.configurations.names.collect { String name ->
+				// check if configuration should be included
+				if (project.versioneye.acceptConfiguration(name)) {
+					def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
+					// retrieve all external dependencies
+					//XXX we are ignoring the dependency relations here - does it matter for VersionEye?
+					resolvedConfig.lenientConfiguration.getArtifacts(EXTERNAL_DEPENDENCY)
+				}
+				else []
+			}.flatten() as Set
+		}
+	
+		def deps
+		if (project.versioneye.dependencies == VersionEyeExtension.declared) {
+			// declared dependencies: only use first level dependencies
+			
+			deps = project.configurations.names.collect { String name ->
+				// check if configuration should be included
+				if (project.versioneye.acceptConfiguration(name)) {
+					def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
+					// retrieve all external first level dependencies
+					resolvedConfig.lenientConfiguration.getFirstLevelModuleDependencies(EXTERNAL_DEPENDENCY)
+				}
+				else []
+			}.flatten() as Set
+		}
 		
 		// create the pom.xml
 		(file as File).withWriter { w ->
@@ -71,11 +95,20 @@ class PomTask extends DefaultTask {
 				pom.version project.version
 				pom.artifactId project.name
 				pom.dependencies {
-					artifacts.each { ResolvedArtifact artifact ->
+					// artifacts
+					artifacts?.each { ResolvedArtifact artifact ->
 						pom.dependency {
 							groupId artifact.moduleVersion.id.group
 							artifactId artifact.moduleVersion.id.name
 							version artifact.moduleVersion.id.version
+						}
+					}
+					// deps
+					deps?.each { ResolvedDependency dep ->
+						pom.dependency {
+							groupId dep.moduleGroup
+							artifactId dep.moduleName
+							version dep.moduleVersion
 						}
 					}
 				}
