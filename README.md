@@ -29,18 +29,21 @@ apply plugin: 'versioneye'
 
 ### API key
 
-You need to provide your [VersionEye](https://www.versioneye.com) API key for the plugin to be able to communicate with the VersionEye API. You do this through a property, e.g. by specifying it **gradle.properties** in **~/.gradle/** or the project directory, or via the command line. However, it is strongly recommended not to place it somewhere where it is publicly accessible (e.g. in a public GitHub repository).
+You need to provide your [VersionEye](https://www.versioneye.com) API key for the plugin to be able to communicate with the VersionEye API. You do this through a property, e.g. by specifying it in the **gradle.properties** file in **~/.gradle/** or the project directory, or via the command line. However, it is strongly recommended not to place it somewhere where it is publicly accessible (e.g. in a public GitHub repository).
 
 ```
 versioneye.api_key=1234567890abcdef
 ```
 
+If logged in to VersionEye, you can get or generate your API key [here](https://www.versioneye.com/settings/api).
+
+
 ### Gradle tasks
 
 The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
 
-* ***versioneye-create*** - Create a project on [VersionEye](https://www.versioneye.com) and write the project key and identifier to your project's **gradle.properties** (so they can be used with ***versioneye-update***)
-* ***versioneye-update*** - Update the dependencies for the project on [VersionEye](https://www.versioneye.com) that is identified by the project key and your API key
+* ***versioneye-create*** - Creates a project on [VersionEye](https://www.versioneye.com) and write the project key and identifier to your project's **gradle.properties** (so they can be used with ***versioneye-update***)
+* ***versioneye-update*** - Updates the dependencies for the project on [VersionEye](https://www.versioneye.com) that is identified by the project key and your API key
  
 ### Project configuration
 
