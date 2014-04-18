@@ -87,7 +87,9 @@ class PomTask extends DefaultTask {
 		}
 		
 		// create the pom.xml
-		(file as File).withWriter { w ->
+		def pomFile = (file as File)
+		pomFile.parentFile.mkdirs()
+		pomFile.withWriter { w ->
 			def pom = new groovy.xml.MarkupBuilder(w)
 			pom.project {
 				pom.name project.name

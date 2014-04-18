@@ -18,7 +18,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.standardout:gradle-versioneye-plugin:0.1'
+		classpath 'org.standardout:gradle-versioneye-plugin:0.1.1'
 	}
 }
 
