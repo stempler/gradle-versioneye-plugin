@@ -10,15 +10,15 @@ It works quite similar to the [VersionEye plugin for Maven](https://github.com/v
 Usage
 -----
 
-The plugin is not yet released to Maven Central, so you need to build it locally using `gradlew install` and add it as a dependency to your Gradle project's build script like this:
+The simplest way to apply the plugin to your Gradle build is using the latest release hosted on Maven Central:
 
 ```groovy
 buildscript {
 	repositories {
-		mavenLocal()
+		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.standardout:gradle-versioneye-plugin:0.1-SNAPSHOT'
+		classpath 'org.standardout:gradle-versioneye-plugin:0.1'
 	}
 }
 
