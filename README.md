@@ -44,4 +44,29 @@ The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
  
 ### Project configuration
 
+#### VersionEye project
+
 Once you create a VersionEye project with ***versioneye-create***, it will add the `versioneye.projectkey` and `versioneye.projectid` properties to the **gradle.properties** file in your project directory. But you can also provide these settings manually in any way Gradle supports specifying properties (e.g. if you already have an existing VersionEye project).
+
+#### Which dependencies?
+
+There are two main modes, you can use only the **declared** dependencies or additionally the **transitive** dependencies:
+
+* **declared** - only first level dependencies are included (default)
+* **transitive** - the declared and all transitive dependencies
+
+Configuration example:
+```groovy
+versioneye {
+  dependencies = transitive
+}
+```
+
+To further customize which dependencies are analyzed, you can exclude specific configurations, for example to exclude the dependencies that are only needed for tests with the Gradle Java plugin:
+```groovy
+versioneye {
+  exclude 'testCompile', 'testRuntime'
+}
+```
+
+Please note that if you exclude a configuration that is extended by another configuration that you did not exclude, this will have no effect (e.g. if you exclude *runtime* but don't exclude *testRuntime*).
