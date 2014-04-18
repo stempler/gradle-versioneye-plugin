@@ -70,3 +70,8 @@ versioneye {
 ```
 
 Please note that if you exclude a configuration that is extended by another configuration that you did not exclude, this will have no effect (e.g. if you exclude *runtime* but don't exclude *testRuntime*).
+
+License
+-----
+
+[The MIT License (MIT)](http://opensource.org/licenses/MIT)
