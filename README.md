@@ -3,6 +3,8 @@ gradle-versioneye-plugin
 
 Plugin for [Gradle](http://www.gradle.org/) to update your project dependencies status on [VersionEye](https://www.versioneye.com) based on the resolved dependency configurations of your Gradle project.
 
+It works quite similar to the [VersionEye plugin for Maven](https://github.com/versioneye/versioneye_maven_plugin).
+
 [![Dependency Status](https://www.versioneye.com/user/projects/53511f70fe0d0774a8000b25/badge.png)](https://www.versioneye.com/user/projects/53511f70fe0d0774a8000b25)
 
 Usage
