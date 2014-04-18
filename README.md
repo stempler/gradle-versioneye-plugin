@@ -35,7 +35,7 @@ You need to provide your [VersionEye](https://www.versioneye.com) API key for th
 versioneye.api_key=1234567890abcdef
 ```
 
-### Tasks
+### Gradle tasks
 
 The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
 
