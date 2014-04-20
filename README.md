@@ -44,6 +44,11 @@ The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
 
 * ***versioneye-create*** - Creates a project on [VersionEye](https://www.versioneye.com) and write the project key and identifier to your project's **gradle.properties** (so they can be used with ***versioneye-update***)
 * ***versioneye-update*** - Updates the dependencies for the project on [VersionEye](https://www.versioneye.com) that is identified by the project key and your API key
+
+Example call creating a VersionEye project - in this case the API key is provided via the command line:
+```
+gradle -Pversioneye.api_key=1234567890abcdef -info versioneye-create
+``` 
  
 ### Project configuration
 
