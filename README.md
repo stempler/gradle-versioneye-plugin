@@ -5,7 +5,7 @@ Plugin for [Gradle](http://www.gradle.org/) to update your project dependencies 
 
 It works quite similar to the [VersionEye plugin for Maven](https://github.com/versioneye/versioneye_maven_plugin).
 
-[![Dependency Status](https://www.versioneye.com/user/projects/53511f70fe0d0774a8000b25/badge.png)](https://www.versioneye.com/user/projects/53511f70fe0d0774a8000b25)
+[![Dependency Status](https://www.versioneye.com/java/org.standardout:gradle-versioneye-plugin/badge.svg)](https://www.versioneye.com/java/org.standardout:gradle-versioneye-plugin)
 
 Usage
 -----
@@ -48,8 +48,8 @@ The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
 Example call creating a VersionEye project - in this case the API key is provided via the command line:
 ```
 gradle -Pversioneye.api_key=1234567890abcdef -info versioneye-create
-``` 
- 
+```
+
 ### Project configuration
 
 #### VersionEye project
