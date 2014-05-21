@@ -66,9 +66,16 @@ class UpdateTask extends DefaultTask {
 		  response.success = {
 			  resp, json ->
 			  assert json, 'Invalid response'
-			  project.logger.info 'Updated VersionEye project successfully'
-			  json.dep_number?.with{ project.logger.info "$it dependencies overall" }
-			  json.out_number?.with{ project.logger.info "$it outdated dependencies" } 
+			  project.logger.lifecycle "Updated VersionEye project $json.name successfully"
+			  json.dependencies?.each {
+				if (it.outdated) {
+					project.logger.lifecycle "Consider updating $it.name from $it.version_requested to $it.version_current"
+				} else if (!it.unknown) {
+					project.logger.lifecycle "$it.name is up-to-date"
+				}
+			  }
+			  json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
+			  json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
 		  }
 		}
 	}
