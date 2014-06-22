@@ -36,6 +36,7 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskAction;
+import static Util.logResult
 
 /**
  * Creates a VersionEye project and stores the project key in the
@@ -74,7 +75,7 @@ class CreateTask extends DefaultTask {
 			  def projectKey = json.project_key
 			  def projectId = json.id
 			  assert projectKey, 'Project key could not be determined from response'
-			  project.logger.info "Project created with project key $projectKey"
+			  project.logger.lifecycle "Project created with project key $projectKey"
 			  
 			  // save project key in properties
 			  Properties props = new Properties()
@@ -95,8 +96,7 @@ class CreateTask extends DefaultTask {
 			  }
 			  project.logger.warn 'Saved project key to ' + propertiesFile.name 
 			  
-			  json.dep_number?.with{ project.logger.info "$it dependencies overall" }
-			  json.out_number?.with{ project.logger.info "$it outdated dependencies" }
+			  logResult(project, json)
 		  }
 		}
 	}
