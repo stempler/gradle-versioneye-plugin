@@ -36,6 +36,7 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskAction;
+import static Util.logResult
 
 /**
  * Creates a VersionEye project and stores the project key in the
@@ -95,8 +96,7 @@ class CreateTask extends DefaultTask {
 			  }
 			  project.logger.warn 'Saved project key to ' + propertiesFile.name 
 			  
-			  json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
-			  json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
+			  logResult(project, json)
 		  }
 		}
 	}

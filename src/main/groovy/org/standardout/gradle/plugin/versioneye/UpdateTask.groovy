@@ -36,6 +36,7 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskAction;
+import static Util.logResult
 
 /**
  * Updates the VersionEye project with the Gradle project dependencies.
@@ -67,15 +68,7 @@ class UpdateTask extends DefaultTask {
 			  resp, json ->
 			  assert json, 'Invalid response'
 			  project.logger.lifecycle "Updated VersionEye project $json.name successfully"
-			  json.dependencies?.each {
-				if (it.outdated) {
-					project.logger.lifecycle "Consider updating $it.name from $it.version_requested to $it.version_current"
-				} else if (!it.unknown) {
-					project.logger.lifecycle "$it.name is up-to-date"
-				}
-			  }
-			  json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
-			  json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
+			  logResult(project, json)
 		  }
 		}
 	}
