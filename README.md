@@ -18,11 +18,11 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.standardout:gradle-versioneye-plugin:0.1.1'
+		classpath 'org.standardout:gradle-versioneye-plugin:1.0'
 	}
 }
 
-apply plugin: 'versioneye'
+apply plugin: 'org.standardout.versioneye'
 ```
 
 *gradle-versioneye-plugin* has been tested with Gradle 1.11.

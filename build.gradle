@@ -1,16 +1,25 @@
 
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+	}
+}
+
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'eclipse'
+apply plugin: 'com.jfrog.bintray'
 
 repositories {
-	mavenLocal()
 	mavenCentral()
 }
 
 group = 'org.standardout'
-version = '0.2-SNAPSHOT'
+version = '1.0.0'
 
 jar {
 	// include license into jar
@@ -38,7 +47,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '1.11'
+	gradleVersion = '2.0'
 }
 
 // package groovydoc into a jar file
@@ -137,4 +146,34 @@ groovydoc {
 }
 dependencies {
 	jansi 'org.fusesource.jansi:jansi:1.11'
+}
+
+// bintray
+
+bintray { // task bintrayUpload
+	user = project.getProperty('bintrayUser')
+	key = project.getProperty('bintrayApiKey')
+
+	configurations = ['archives']
+	
+	dryRun = false
+	publish = !project.version.endsWith('-SNAPSHOT')
+	pkg {
+		def githubUrl = 'https://github.com/stempler/gradle-versioneye-plugin'
+		repo = 'gradle-plugins'
+		name = 'gradle-versioneye-plugin'
+		desc = 'Plugin for Gradle to update your project\'s dependencies status on http://www.versioneye.com'
+		websiteUrl = githubUrl
+		issueTrackerUrl = "$githubUrl/issues"
+		vcsUrl = "${githubUrl}.git"
+		licenses = ['MIT']
+		labels = ['gradle', 'versioneye', 'dependencies']
+		publicDownloadNumbers = true
+		// version descriptor
+		version {
+			name = project.version
+			attributes = ['gradle-plugin': "org.standardout.versioneye:${project.group}:gradle-versioneye-plugin"]
+		}
+	}
+
 }
