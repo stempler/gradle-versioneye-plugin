@@ -79,6 +79,8 @@ versioneye {
 
 Please note that if you exclude a configuration that is extended by another configuration that you did not exclude, this will have no effect (e.g. if you exclude *runtime* but don't exclude *testRuntime*).
 
+**Tip:** If there are dependencies showing up you have no idea where they are coming from, use `gradle -q dependencies` to get an overview of all configurations and the dependencies contained in them. Use it to identifiy the configurations that you don't want to include.
+
 License
 -----
 
