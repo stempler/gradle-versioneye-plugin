@@ -14,7 +14,7 @@ The simplest way to apply the plugin to your Gradle build is to use the **Gradle
 
 ```groovy
 plugins {
-    id "org.standardout.versioneye" version "1.0.0"
+    id "org.standardout.versioneye" version "1.0.1"
 }
 ```
 
@@ -26,7 +26,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath 'org.standardout:gradle-versioneye-plugin:1.0.0'
+		classpath 'org.standardout:gradle-versioneye-plugin:1.0.1'
 	}
 }
 
@@ -52,6 +52,8 @@ The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
 
 * ***versioneye-create*** - Creates a project on [VersionEye](https://www.versioneye.com) and write the project key and identifier to your project's **gradle.properties** (so they can be used with ***versioneye-update***)
 * ***versioneye-update*** - Updates the dependencies for the project on [VersionEye](https://www.versioneye.com) that is identified by the project key and your API key
+ 
+Alternatively you can use the CamelCase versions of these tasks, ***versionEyeCreate*** and ***versionEyeUpdate*** which can be abbreviated on the command line (see [the Gradle documentation](http://www.gradle.org/docs/current/userguide/tutorial_gradle_command_line.html)), e.g. `gradle vEU` or `gradle vEyeU` for executing ***versionEyeUpdate***.
 
 Example call creating a VersionEye project - in this case the API key is provided via the command line:
 ```
