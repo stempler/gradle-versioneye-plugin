@@ -10,7 +10,15 @@ It works quite similar to the [VersionEye plugin for Maven](https://github.com/v
 Usage
 -----
 
-The simplest way to apply the plugin to your Gradle build is using the latest release hosted on Maven Central:
+The simplest way to apply the plugin to your Gradle build is to use the **Gradle 2** plugin mechanism:
+
+```groovy
+plugins {
+    id "org.standardout.versioneye" version "1.0.0"
+}
+```
+
+For **Gradle 1.x** add the artifact to your buildscript classpath via jCenter or Maven Central:
 
 ```groovy
 buildscript {
