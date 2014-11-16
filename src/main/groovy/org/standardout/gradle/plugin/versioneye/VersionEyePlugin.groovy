@@ -84,6 +84,10 @@ public class VersionEyePlugin implements Plugin<Project> {
 			dependencies = dependenciesFile
 		}
 		updateTask.dependsOn(jsonTask)
+		
+		// task aliases using CamelCase (#4)
+		project.task('versionEyeCreate').dependsOn(createTask)
+		project.task('versionEyeUpdate').dependsOn(updateTask)
 	}
 
 }
