@@ -50,14 +50,14 @@ class UpdateTask extends DefaultTask {
 	@TaskAction
 	def update() {
 		assert dependencies as File && (dependencies as File).exists()
-		def projectKey = project.properties[VersionEyePlugin.PROP_PROJECT_KEY]
-		assert projectKey, 'No project key defined - either define a project key manually or run the versioneye-create task'
+		def projectId = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
+		assert projectId, 'No project ID defined - either define a project ID manually or run the versioneye-create task'
 		def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
 		assert apiKey, 'No API key defined'
 		
 		def http = new HTTPBuilder(VersionEyePlugin.API_BASE_URL)
 		http.request( Method.POST, ContentType.JSON ) { req ->
-		  uri.path = '/api/v2/projects/' + projectKey
+		  uri.path = '/api/v2/projects/' + projectId
 		  uri.query = [ api_key: apiKey ]
 		  requestContentType = 'multipart/form-data'
 		  MultipartEntity entity = new MultipartEntity()
