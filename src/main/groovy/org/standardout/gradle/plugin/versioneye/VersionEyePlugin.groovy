@@ -43,7 +43,9 @@ import org.gradle.api.artifacts.ResolvedArtifact
  */
 public class VersionEyePlugin implements Plugin<Project> {
 	
+	@Deprecated
 	public static final String PROP_PROJECT_KEY = 'versioneye.projectkey'
+	
 	public static final String PROP_PROJECT_ID = 'versioneye.projectid'
 	public static final String PROP_API_KEY = 'versioneye.api_key'
 	public static final String API_BASE_URL = 'https://www.versioneye.com'

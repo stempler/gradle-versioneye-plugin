@@ -56,8 +56,8 @@ class CreateTask extends DefaultTask {
 		assert dependencies as File && (dependencies as File).exists()
 		def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
 		assert apiKey, 'No API key defined'
-		def keyAlreadyThere = project.properties[VersionEyePlugin.PROP_PROJECT_KEY]
-		assert !keyAlreadyThere, 'There is already a project key defined, run versioneye-update to update the existing project instead'
+		def keyAlreadyThere = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
+		assert !keyAlreadyThere, 'There is already a project ID defined, run versioneye-update to update the existing project instead'
 		
 		def http = new HTTPBuilder(VersionEyePlugin.API_BASE_URL)
 		http.request( Method.POST, ContentType.JSON ) { req ->
@@ -70,12 +70,11 @@ class CreateTask extends DefaultTask {
 		  
 		  response.success = {
 			  resp, json ->
-			  // extract project key
+			  // extract project ID
 			  assert json, 'Invalid response'
-			  def projectKey = json.project_key
 			  def projectId = json.id
-			  assert projectKey, 'Project key could not be determined from response'
-			  project.logger.lifecycle "Project created with project key $projectKey"
+			  assert projectId, 'Project ID could not be determined from response'
+			  project.logger.lifecycle "Project created with project ID $projectId"
 			  
 			  // save project key in properties
 			  Properties props = new Properties()
@@ -84,17 +83,15 @@ class CreateTask extends DefaultTask {
 					  props.load(it)
 				  }
 			  }
-			  props.getProperty(VersionEyePlugin.PROP_PROJECT_KEY)?.with {
-				  project.logger.warn "Replacing existing project key $it in $propertiesFile"
+			  props.getProperty(VersionEyePlugin.PROP_PROJECT_ID)?.with {
+				  project.logger.warn "Replacing existing project ID $it in $propertiesFile"
 			  }
-			  props.setProperty(VersionEyePlugin.PROP_PROJECT_KEY, projectKey)
-			  if (projectId) { // also save project ID
-				  props.setProperty(VersionEyePlugin.PROP_PROJECT_ID, projectId)
-			  }
+			  props.setProperty(VersionEyePlugin.PROP_PROJECT_ID, projectId)
+
 			  propertiesFile.withWriter {
 				  props.store(it, null)
 			  }
-			  project.logger.warn 'Saved project key to ' + propertiesFile.name 
+			  project.logger.warn 'Saved project ID to ' + propertiesFile.name 
 			  
 			  logResult(project, json)
 		  }
