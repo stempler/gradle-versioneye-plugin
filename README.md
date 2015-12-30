@@ -48,8 +48,8 @@ If logged in to VersionEye, you can get or generate your API key [here](https://
 
 The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
 
-* ***versioneye-create*** - Creates a project on [VersionEye](https://www.versioneye.com) and write the project key and identifier to your project's **gradle.properties** (so they can be used with ***versioneye-update***)
-* ***versioneye-update*** - Updates the dependencies for the project on [VersionEye](https://www.versioneye.com) that is identified by the project key and your API key
+* ***versioneye-create*** - Creates a project on [VersionEye](https://www.versioneye.com) and write the project ID to your project's **gradle.properties** (so they can be used with ***versioneye-update***)
+* ***versioneye-update*** - Updates the dependencies for the project on [VersionEye](https://www.versioneye.com) that is identified by the project ID and your API key
  
 Alternatively you can use the CamelCase versions of these tasks, ***versionEyeCreate*** and ***versionEyeUpdate*** which can be abbreviated on the command line (see [the Gradle documentation](http://www.gradle.org/docs/current/userguide/tutorial_gradle_command_line.html)), e.g. `gradle vEU` or `gradle vEyeU` for executing ***versionEyeUpdate***.
 
@@ -62,7 +62,7 @@ gradle -Pversioneye.api_key=1234567890abcdef -info versioneye-create
 
 #### VersionEye project
 
-Once you create a VersionEye project with ***versioneye-create***, it will add the `versioneye.projectkey` and `versioneye.projectid` properties to the **gradle.properties** file in your project directory. But you can also provide these settings manually in any way Gradle supports specifying properties (e.g. if you already have an existing VersionEye project).
+Once you create a VersionEye project with ***versioneye-create***, it will add the `versioneye.projectid` property to the **gradle.properties** file in your project directory. But you can also provide these settings manually in any way Gradle supports specifying properties (e.g. if you already have an existing VersionEye project).
 
 #### Which dependencies?
 
