@@ -1,3 +1,7 @@
+### 1.1.0
+
+ - Fix for breaking VersionEye API change (Project key is obsolete)
+
 ### 1.0.0
 
  - Qualified plugin ID (`org.standardout.versioneye`) for use with new Gradle plugin repository
