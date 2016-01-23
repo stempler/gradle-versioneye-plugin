@@ -14,7 +14,7 @@ The simplest way to apply the plugin to your Gradle build is to use the **Gradle
 
 ```groovy
 plugins {
-    id "org.standardout.versioneye" version "1.1.1"
+    id "org.standardout.versioneye" version "1.2.0"
 }
 ```
 
@@ -26,7 +26,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath 'org.standardout:gradle-versioneye-plugin:1.1.1'
+		classpath 'org.standardout:gradle-versioneye-plugin:1.2.0'
 	}
 }
 

@@ -1,3 +1,7 @@
+### 1.2.0
+
+ - Support customizing base URL for use with VersionEye Enterprise
+
 ### 1.1.0
 
  - Fix for breaking VersionEye API change (Project key is obsolete)

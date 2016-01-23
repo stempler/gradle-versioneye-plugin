@@ -19,7 +19,7 @@ repositories {
 }
 
 group = 'org.standardout'
-version = '1.2.0-SNAPSHOT'
+version = '1.2.0'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
