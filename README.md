@@ -89,6 +89,18 @@ Please note that if you exclude a configuration that is extended by another conf
 
 **Tip:** If there are dependencies showing up you have no idea where they are coming from, use `gradle -q dependencies` to get an overview of all configurations and the dependencies contained in them. Use it to identifiy the configurations that you don't want to include.
 
+
+#### VersionEye Enterprise
+
+If you want to connect to a VersionEye Enterprise installation instead of *versioneye.com*, you can adapt the base URL used to access the API:
+
+```groovy
+versioneye {
+  baseUrl = 'https://www.versioneye.com' // this is the default
+}
+```
+
+
 License
 -----
 

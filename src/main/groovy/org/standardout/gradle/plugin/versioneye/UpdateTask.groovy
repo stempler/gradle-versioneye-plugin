@@ -55,7 +55,7 @@ class UpdateTask extends DefaultTask {
 		def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
 		assert apiKey, 'No API key defined'
 		
-		def http = new HTTPBuilder(VersionEyePlugin.API_BASE_URL)
+		def http = new HTTPBuilder(project.versioneye.baseUrl)
 		http.request( Method.POST, ContentType.JSON ) { req ->
 		  uri.path = '/api/v2/projects/' + projectId
 		  uri.query = [ api_key: apiKey ]

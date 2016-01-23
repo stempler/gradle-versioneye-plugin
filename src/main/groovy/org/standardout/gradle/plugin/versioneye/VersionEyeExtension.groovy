@@ -62,6 +62,11 @@ class VersionEyeExtension {
 		}
 	}
 	
+	/**
+	 * Base URL of the VersionEye API.
+	 */
+	String baseUrl = 'https://www.versioneye.com'
+	
 	// internal
 	
 	/**

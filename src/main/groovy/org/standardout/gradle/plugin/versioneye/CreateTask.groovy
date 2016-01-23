@@ -59,7 +59,7 @@ class CreateTask extends DefaultTask {
 		def keyAlreadyThere = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
 		assert !keyAlreadyThere, 'There is already a project ID defined, run versioneye-update to update the existing project instead'
 		
-		def http = new HTTPBuilder(VersionEyePlugin.API_BASE_URL)
+		def http = new HTTPBuilder(project.versioneye.baseUrl)
 		http.request( Method.POST, ContentType.JSON ) { req ->
 		  uri.path = '/api/v2/projects'
 		  uri.query = [ api_key: apiKey ]
