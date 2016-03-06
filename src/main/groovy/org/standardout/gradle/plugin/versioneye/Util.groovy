@@ -34,17 +34,20 @@ import org.gradle.api.Project
  * @author Simon Templer
  */
 class Util {
-	
-	static def logResult(Project project, def json) {
-		json.dependencies?.each {
-			if (it.outdated) {
-				project.logger.lifecycle "Consider updating $it.name from $it.version_requested to $it.version_current"
-			} else if (!it.unknown) {
-				project.logger.lifecycle "$it.name is up-to-date"
-			}
-		}
-		json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
-		json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
+
+  static def logResult(Project project, def json) {
+    json.dependencies?.each {
+      if (it.outdated) {
+        project.logger.lifecycle "Consider updating $it.name from $it.version_requested to $it.version_current"
+      } else if (!it.unknown) {
+        project.logger.lifecycle "$it.name is up-to-date"
+      }
+    }
+    json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
+    json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
+    
+    // cache result for further analysis
+    project.versioneye.lastVersionEyeResponse = json
 	}
   
   static HTTPBuilder createHttpBuilder(Project project) {
@@ -55,12 +58,15 @@ class Util {
       if (data?.error) {
         msg += " (${data.error})"
       }
-      project.logger.error msg
-      // fail the task
-      throw new GradleException(msg)
+      fail(project, msg)
     }
     
     http
+  }
+  
+  static void fail(Project project, String msg) {
+    project.logger.error(msg)
+    throw new GradleException(msg)
   } 
 
 }

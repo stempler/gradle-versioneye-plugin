@@ -52,6 +52,11 @@ class VersionEyeExtension {
 	 * Configuration to exclude when calculating the dependencies.
 	 */
 	final Set<String> excludeConfigurations = new HashSet<String>()
+  
+  /**
+   * If the license check should fail when unknown licenses are encountered. 
+   */
+  boolean licenseCheckBreakByUnknown = false
 	
 	/**
 	 * Specify configurations to exclude.
@@ -66,7 +71,7 @@ class VersionEyeExtension {
 	 * Base URL of the VersionEye API.
 	 */
 	String baseUrl = 'https://www.versioneye.com'
-	
+  
 	// internal
 	
 	/**
@@ -75,5 +80,10 @@ class VersionEyeExtension {
 	boolean acceptConfiguration(String name) {
 		!excludeConfigurations.contains(name)
 	}
+  
+  /**
+   * Cache the response received from VersionEye with create or update.
+   */
+  def lastVersionEyeResponse
 
 }

@@ -36,6 +36,8 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.artifacts.ResolvedArtifact
 
+import static Util.fail
+
 /**
  * VersionEye plugin for Gradle.
  * 
@@ -85,6 +87,18 @@ public class VersionEyePlugin implements Plugin<Project> {
 			dependencies = dependenciesFile
 		}
 		updateTask.dependsOn(jsonTask)
+    
+    // Check tasks based on VersionEye response
+        
+    Task licenseCheckTask = project.task('versionEyeLicenseCheck', dependsOn: updateTask).doFirst {
+      def json = project.versioneye.lastVersionEyeResponse
+      if (json.licenses_red) {
+        fail(project, "${json.licenses_red} components violate the license whitelist!")
+      }
+      if (project.versioneye.licenseCheckBreakByUnknown && json.licenses_unknown) {
+        fail(project, "${json.licenses_unknown} components are without any license!")
+      }
+    }
 		
 		// task aliases using CamelCase (#4)
 		project.task('versionEyeCreate').dependsOn(createTask)

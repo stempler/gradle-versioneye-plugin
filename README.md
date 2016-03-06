@@ -46,7 +46,7 @@ If logged in to VersionEye, you can get or generate your API key [here](https://
 
 ### Gradle tasks
 
-The **versioneye** plugin comes with two Gradle tasks that are relevant for you:
+The **versioneye** plugin comes with two main Gradle tasks that are relevant for you:
 
 * ***versioneye-create*** - Creates a project on [VersionEye](https://www.versioneye.com) and write the project ID to your project's **gradle.properties** (so they can be used with ***versioneye-update***)
 * ***versioneye-update*** - Updates the dependencies for the project on [VersionEye](https://www.versioneye.com) that is identified by the project ID and your API key
@@ -57,6 +57,13 @@ Example call creating a VersionEye project - in this case the API key is provide
 ```
 gradle -Pversioneye.api_key=1234567890abcdef -info versioneye-create
 ```
+
+#### Additional checks
+
+Based on the information retrieved from VersionEye you can do a number of additional checks with the following tasks:
+
+* ***versionEyeLicenseCheck*** - Check if there are any violations of your license white list
+
 
 ### Project configuration
 
@@ -88,6 +95,16 @@ versioneye {
 Please note that if you exclude a configuration that is extended by another configuration that you did not exclude, this will have no effect (e.g. if you exclude *runtime* but don't exclude *testRuntime*).
 
 **Tip:** If there are dependencies showing up you have no idea where they are coming from, use `gradle -q dependencies` to get an overview of all configurations and the dependencies contained in them. Use it to identifiy the configurations that you don't want to include.
+
+#### Unknown licenses
+
+If you want the license check to fail when dependencies with unknown license are encountered, you need to enable it in the configuration like this:
+
+```groovy
+versioneye {
+  licenseCheckBreakByUnknown = true
+}
+```
 
 
 #### VersionEye Enterprise
