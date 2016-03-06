@@ -28,8 +28,8 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import groovyx.net.http.RESTClient
-import org.apache.http.entity.mime.MultipartEntity
-import org.apache.http.entity.mime.content.FileBody
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.entity.ContentType as ApacheContentType
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Dependency
@@ -62,9 +62,9 @@ class UpdateTask extends DefaultTask {
       uri.path = '/api/v2/projects/' + projectId
       uri.query = [ api_key: apiKey ]
       requestContentType = 'multipart/form-data'
-      MultipartEntity entity = new MultipartEntity()
-      entity.addPart("project_file", new FileBody(dependencies as File, 'pom.json', 'application/json', null))
-      req.entity = entity
+      def entityBuilder = MultipartEntityBuilder.create()
+      entityBuilder.addBinaryBody('project_file', dependencies as File, ApacheContentType.APPLICATION_JSON, 'pom.json')
+      req.entity = entityBuilder.build()
 
       response.success = {
         resp, json ->
