@@ -93,17 +93,17 @@ public class VersionEyePlugin implements Plugin<Project> {
     Task licenseCheckTask = project.task('versionEyeLicenseCheck', dependsOn: updateTask).doFirst {
       def json = project.versioneye.lastVersionEyeResponse
       if (json.licenses_red) {
-        fail(project, "${json.licenses_red} components violate the license whitelist!")
+        fail(project, "${json.licenses_red} dependencies violate the license whitelist!")
       }
       if (project.versioneye.licenseCheckBreakByUnknown && json.licenses_unknown) {
-        fail(project, "${json.licenses_unknown} components are without any license!")
+        fail(project, "${json.licenses_unknown} dependencies are without any license!")
       }
     }
     
     Task securityCheckTask = project.task('versionEyeSecurityCheck', dependsOn: updateTask).doFirst {
       def json = project.versioneye.lastVersionEyeResponse
       if (json.sv_count) {
-        fail(project, "${json.sv_count} components have known security vulnerabilities!")
+        fail(project, "${json.sv_count} dependencies have known security vulnerabilities!")
       }
     }
     
