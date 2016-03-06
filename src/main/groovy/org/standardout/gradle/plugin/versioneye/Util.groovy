@@ -68,5 +68,42 @@ class Util {
     project.logger.error(msg)
     throw new GradleException(msg)
   }
+  
+  static void saveProjectId(Project project, File propertiesFile, def projectId) {
+    def lines
+    if (propertiesFile.exists()) {
+      lines = propertiesFile.readLines()
+    }
+    else {
+      lines = []
+    }
+    
+    // there should be no special chars in the project ID, so building the property like this should be OK
+    def projectIdLine = VersionEyePlugin.PROP_PROJECT_ID + '=' + projectId
+    
+    boolean replaced = false 
+    lines = lines.collect { line ->
+      if (line.startsWith(VersionEyePlugin.PROP_PROJECT_ID + '=')) {
+        project.logger.warn "Replacing existing project ID in $propertiesFile"
+        replaced = true
+        projectIdLine
+      }
+      else {
+        line
+      }
+    }
+    if (!replaced) {
+      // add project ID at the end
+      lines << '# VersionEye project ID added by Gradle VersionEye plugin'
+      lines << projectIdLine
+    }
+
+    propertiesFile.withPrintWriter { writer ->
+      lines.each {
+        writer.println(it)
+      }
+    }
+    project.logger.warn 'Saved project ID to ' + propertiesFile.name
+  }
 
 }

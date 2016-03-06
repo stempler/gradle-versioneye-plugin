@@ -92,22 +92,8 @@ class CreateTask extends DefaultTask {
         assert projectId, 'Project ID could not be determined from response'
         project.logger.lifecycle "Project created with project ID $projectId"
 
-        // save project key in properties
-        Properties props = new Properties()
-        if (propertiesFile.exists()) {
-          propertiesFile.withReader {
-            props.load(it)
-          }
-        }
-        props.getProperty(VersionEyePlugin.PROP_PROJECT_ID)?.with {
-          project.logger.warn "Replacing existing project ID $it in $propertiesFile"
-        }
-        props.setProperty(VersionEyePlugin.PROP_PROJECT_ID, projectId)
-
-        propertiesFile.withWriter {
-          props.store(it, null)
-        }
-        project.logger.warn 'Saved project ID to ' + propertiesFile.name
+        // save project ID in properties
+        saveProjectId(project, propertiesFile, projectId)
 
         logResult(project, json)
       }
