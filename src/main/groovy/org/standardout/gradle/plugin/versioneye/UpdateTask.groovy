@@ -24,19 +24,20 @@
 
 package org.standardout.gradle.plugin.versioneye
 
-import groovyx.net.http.ContentType;
+import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.Method;
+import groovyx.net.http.Method
 import groovyx.net.http.RESTClient
 import org.apache.http.entity.mime.MultipartEntity
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.FileBody
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.GradleException
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.specs.Spec;
-import org.gradle.api.tasks.TaskAction;
-import static Util.logResult
+import org.gradle.api.specs.Spec
+import org.gradle.api.tasks.TaskAction
+import static Util.*
 
 /**
  * Updates the VersionEye project with the Gradle project dependencies.
@@ -55,7 +56,8 @@ class UpdateTask extends DefaultTask {
 		def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
 		assert apiKey, 'No API key defined'
 		
-		def http = new HTTPBuilder(project.versioneye.baseUrl)
+		def http = createHttpBuilder(project)
+    
 		http.request( Method.POST, ContentType.JSON ) { req ->
 		  uri.path = '/api/v2/projects/' + projectId
 		  uri.query = [ api_key: apiKey ]

@@ -24,6 +24,8 @@
 
 package org.standardout.gradle.plugin.versioneye
 
+import groovyx.net.http.HTTPBuilder
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 
 /**
@@ -43,6 +45,22 @@ class Util {
 		}
 		json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
 		json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
-	} 
+	}
+  
+  static HTTPBuilder createHttpBuilder(Project project) {
+    def http = new HTTPBuilder(project.versioneye.baseUrl)
+    
+    http.handler.failure = { resp, data ->
+      def msg = "Unexpected failure accessing VersionEye API: ${resp.statusLine}"
+      if (data?.error) {
+        msg += " (${data.error})"
+      }
+      project.logger.error msg
+      // fail the task
+      throw new GradleException(msg)
+    }
+    
+    http
+  } 
 
 }
