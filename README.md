@@ -54,6 +54,7 @@ The **versioneye** plugin comes with two main Gradle tasks that are relevant for
 Alternatively you can use the CamelCase versions of these tasks, ***versionEyeCreate*** and ***versionEyeUpdate*** which can be abbreviated on the command line (see [the Gradle documentation](http://www.gradle.org/docs/current/userguide/tutorial_gradle_command_line.html)), e.g. `gradle vEU` or `gradle vEyeU` for executing ***versionEyeUpdate***.
 
 Example call creating a VersionEye project - in this case the API key is provided via the command line:
+
 ```
 gradle -Pversioneye.api_key=1234567890abcdef -info versioneye-create
 ```
@@ -74,6 +75,22 @@ Executing any of these tasks will update the project on VersionEye.
 #### VersionEye project
 
 Once you create a VersionEye project with ***versioneye-create***, it will add the `versioneye.projectid` property to the **gradle.properties** file in your project directory. But you can also provide these settings manually in any way Gradle supports specifying properties (e.g. if you already have an existing VersionEye project).
+
+
+#### Organisation and Team
+
+When creating a project you can directly associate it with a specific organisation and team.
+All you need to do is provide the corresponding Gradle properties for ***versioneye-create***:
+
+* ***versioneye.organisation*** - the organisation namespace
+* ***versioneye.team*** - the team name
+
+These properties can be defined via **gradle.properties** file or via the command line, for example:
+
+```
+gradle -Pversioneye.api_key=1234567890abcdef -Pversioneye.organisation=myorg -Pversioneye.team=myteam versioneye-create
+```
+
 
 #### Which dependencies?
 
@@ -99,6 +116,7 @@ versioneye {
 Please note that if you exclude a configuration that is extended by another configuration that you did not exclude, this will have no effect (e.g. if you exclude *runtime* but don't exclude *testRuntime*).
 
 **Tip:** If there are dependencies showing up you have no idea where they are coming from, use `gradle -q dependencies` to get an overview of all configurations and the dependencies contained in them. Use it to identifiy the configurations that you don't want to include.
+
 
 #### Unknown licenses
 

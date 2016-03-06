@@ -50,6 +50,9 @@ public class VersionEyePlugin implements Plugin<Project> {
 
   public static final String PROP_PROJECT_ID = 'versioneye.projectid'
   public static final String PROP_API_KEY = 'versioneye.api_key'
+  
+  public static final String PROP_ORGANISATION = 'versioneye.organisation'
+  public static final String PROP_TEAM = 'versioneye.team'
 
   private Project project
 

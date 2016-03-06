@@ -36,7 +36,7 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskAction;
-import static Util.logResult
+import static Util.*
 
 /**
  * Creates a VersionEye project and stores the project key in the
@@ -58,6 +58,12 @@ class CreateTask extends DefaultTask {
     assert apiKey, 'No API key defined'
     def keyAlreadyThere = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
     assert !keyAlreadyThere, 'There is already a project ID defined, run versioneye-update to update the existing project instead'
+    
+    def orgName = project.properties[VersionEyePlugin.PROP_ORGANISATION]
+    def teamName = project.properties[VersionEyePlugin.PROP_TEAM]
+    if (teamName) {
+      assert orgName, 'If a team is defined for the VersionEye project, an organisation must be defined as well'
+    }
 
     def http = createHttpBuilder(project)
 
@@ -66,7 +72,16 @@ class CreateTask extends DefaultTask {
       uri.query = [ api_key: apiKey ]
       requestContentType = 'multipart/form-data'
       def entityBuilder = MultipartEntityBuilder.create()
-      entityBuilder.addBinaryBody('project_file', dependencies as File, ApacheContentType.APPLICATION_JSON, 'pom.json')
+      entityBuilder.addBinaryBody('upload', dependencies as File, ApacheContentType.APPLICATION_JSON, 'pom.json')
+      entityBuilder.addTextBody('name', project.name)
+      
+      if (orgName) {
+        entityBuilder.addTextBody('orga_name', orgName)
+      }
+      if (teamName) {
+        entityBuilder.addTextBody('team_name', teamName)
+      }
+      
       req.entity = entityBuilder.build()
 
       response.success = {
