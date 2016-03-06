@@ -85,37 +85,44 @@ class PomTask extends DefaultTask {
 				else []
 			}.flatten() as Set
 		}
+    
+    def dependencyList = []
+    
+    // artifacts
+    artifacts?.each { ResolvedArtifact artifact ->
+      dependencyList << [
+        name: "${artifact.moduleVersion.id.group}:${artifact.moduleVersion.id.name}",
+        version: artifact.moduleVersion.id.version,
+        //TODO scope
+        scope: 'compile' //FIXME until it is clear what to use, use fixed value
+      ]
+    }
+    // deps
+    deps?.each { ResolvedDependency dep ->
+      dependencyList << [
+        name: "${dep.moduleGroup}:${dep.moduleName}",
+        version: dep.moduleVersion,
+        //TODO scope
+        scope: 'compile' //FIXME until it is clear what to use, use fixed value
+      ]
+    }
 		
-		// create the pom.xml
+		// create the pom.json descriptor
 		def pomFile = (file as File)
 		pomFile.parentFile.mkdirs()
 		pomFile.withWriter { w ->
-			def pom = new groovy.xml.MarkupBuilder(w)
-			pom.project {
-				pom.name project.name
-				pom.groupId project.group
-				pom.version project.version
-				pom.artifactId project.name
-				pom.dependencies {
-					// artifacts
-					artifacts?.each { ResolvedArtifact artifact ->
-						pom.dependency {
-							groupId artifact.moduleVersion.id.group
-							artifactId artifact.moduleVersion.id.name
-							version artifact.moduleVersion.id.version
-						}
-					}
-					// deps
-					deps?.each { ResolvedDependency dep ->
-						pom.dependency {
-							groupId dep.moduleGroup
-							artifactId dep.moduleName
-							version dep.moduleVersion
-						}
-					}
-				}
+			def pom = new groovy.json.JsonBuilder()
+			pom {
+				name project.name
+				group_id project.group
+				// pom.version project.version
+				artifact_id project.name
+        language 'Java'
+        prod_type 'Maven2'
+				dependencies dependencyList
 			}
-	   }
+      pom.writeTo(w)
+	  }
 	}
 
 }

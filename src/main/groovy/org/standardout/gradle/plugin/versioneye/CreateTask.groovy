@@ -66,7 +66,7 @@ class CreateTask extends DefaultTask {
 		  uri.query = [ api_key: apiKey ]
 		  requestContentType = 'multipart/form-data'
 		  MultipartEntity entity = new MultipartEntity()
-		  entity.addPart("upload", new FileBody(dependencies as File, 'pom.xml', 'application/xml', null))
+		  entity.addPart("upload", new FileBody(dependencies as File, 'pom.json', 'application/json', null))
 		  req.entity = entity
 		  
 		  response.success = {

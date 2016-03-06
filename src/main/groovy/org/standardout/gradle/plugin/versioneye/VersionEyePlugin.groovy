@@ -63,7 +63,7 @@ public class VersionEyePlugin implements Plugin<Project> {
 		project.extensions.create('versioneye', VersionEyeExtension, project)
 		
 		// dependencies file to create
-		dependenciesFile = new File(project.buildDir, 'pom.xml')
+		dependenciesFile = new File(project.buildDir, 'pom.json')
 		
 		// project specific properties file
 		gradleProperties = new File(project.projectDir, 'gradle.properties')

@@ -63,7 +63,7 @@ class UpdateTask extends DefaultTask {
 		  uri.query = [ api_key: apiKey ]
 		  requestContentType = 'multipart/form-data'
 		  MultipartEntity entity = new MultipartEntity()
-		  entity.addPart("project_file", new FileBody(dependencies as File, 'pom.xml', 'application/xml', null))
+		  entity.addPart("project_file", new FileBody(dependencies as File, 'pom.json', 'application/json', null))
 		  req.entity = entity
 		  
 		  response.success = {
