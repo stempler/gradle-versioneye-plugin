@@ -38,56 +38,56 @@ import org.gradle.api.tasks.TaskAction;
  * @author Simon Templer
  */
 class PomTask extends DefaultTask {
-	
-	/**
-	 * Spec that accepts only external dependencies.
-	 */
-	private static class ExternalDependencySpec implements Spec<Dependency> {
-		public boolean isSatisfiedBy(Dependency element) {
-			return element instanceof ExternalDependency
-		}
-	}
-	private static final ExternalDependencySpec EXTERNAL_DEPENDENCY = new ExternalDependencySpec()
-	
-	def file
-	
-	@TaskAction
-	def create() {
-		assert file as File
-		
-		def artifacts
-		if (project.versioneye.dependencies == VersionEyeExtension.transitive) {
-			// transitive dependencies: use all resolved artifacts
-			
-			artifacts = project.configurations.names.collect { String name ->
-				// check if configuration should be included
-				if (project.versioneye.acceptConfiguration(name)) {
-					def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
-					// retrieve all external dependencies
-					//XXX we are ignoring the dependency relations here - does it matter for VersionEye?
-					resolvedConfig.lenientConfiguration.getArtifacts(EXTERNAL_DEPENDENCY)
-				}
-				else []
-			}.flatten() as Set
-		}
-	
-		def deps
-		if (project.versioneye.dependencies == VersionEyeExtension.declared) {
-			// declared dependencies: only use first level dependencies
-			
-			deps = project.configurations.names.collect { String name ->
-				// check if configuration should be included
-				if (project.versioneye.acceptConfiguration(name)) {
-					def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
-					// retrieve all external first level dependencies
-					resolvedConfig.lenientConfiguration.getFirstLevelModuleDependencies(EXTERNAL_DEPENDENCY)
-				}
-				else []
-			}.flatten() as Set
-		}
-    
+
+  /**
+   * Spec that accepts only external dependencies.
+   */
+  private static class ExternalDependencySpec implements Spec<Dependency> {
+    public boolean isSatisfiedBy(Dependency element) {
+      return element instanceof ExternalDependency
+    }
+  }
+  private static final ExternalDependencySpec EXTERNAL_DEPENDENCY = new ExternalDependencySpec()
+
+  def file
+
+  @TaskAction
+  def create() {
+    assert file as File
+
+    def artifacts
+    if (project.versioneye.dependencies == VersionEyeExtension.transitive) {
+      // transitive dependencies: use all resolved artifacts
+
+      artifacts = project.configurations.names.collect { String name ->
+        // check if configuration should be included
+        if (project.versioneye.acceptConfiguration(name)) {
+          def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
+          // retrieve all external dependencies
+          //XXX we are ignoring the dependency relations here - does it matter for VersionEye?
+          resolvedConfig.lenientConfiguration.getArtifacts(EXTERNAL_DEPENDENCY)
+        }
+        else []
+      }.flatten() as Set
+    }
+
+    def deps
+    if (project.versioneye.dependencies == VersionEyeExtension.declared) {
+      // declared dependencies: only use first level dependencies
+
+      deps = project.configurations.names.collect { String name ->
+        // check if configuration should be included
+        if (project.versioneye.acceptConfiguration(name)) {
+          def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
+          // retrieve all external first level dependencies
+          resolvedConfig.lenientConfiguration.getFirstLevelModuleDependencies(EXTERNAL_DEPENDENCY)
+        }
+        else []
+      }.flatten() as Set
+    }
+
     def dependencyList = []
-    
+
     // artifacts
     artifacts?.each { ResolvedArtifact artifact ->
       dependencyList << [
@@ -106,23 +106,23 @@ class PomTask extends DefaultTask {
         scope: 'compile' //FIXME until it is clear what to use, use fixed value
       ]
     }
-		
-		// create the pom.json descriptor
-		def pomFile = (file as File)
-		pomFile.parentFile.mkdirs()
-		pomFile.withWriter { w ->
-			def pom = new groovy.json.JsonBuilder()
-			pom {
-				name project.name
-				group_id project.group
-				// pom.version project.version
-				artifact_id project.name
+
+    // create the pom.json descriptor
+    def pomFile = (file as File)
+    pomFile.parentFile.mkdirs()
+    pomFile.withWriter { w ->
+      def pom = new groovy.json.JsonBuilder()
+      pom {
+        name project.name
+        group_id project.group
+        // pom.version project.version
+        artifact_id project.name
         language 'Java'
         prod_type 'Maven2'
-				dependencies dependencyList
-			}
+        dependencies dependencyList
+      }
       pom.writeTo(w)
-	  }
-	}
+    }
+  }
 
 }

@@ -45,34 +45,34 @@ import static Util.*
  * @author Simon Templer
  */
 class UpdateTask extends DefaultTask {
-	
-	def dependencies
-	
-	@TaskAction
-	def update() {
-		assert dependencies as File && (dependencies as File).exists()
-		def projectId = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
-		assert projectId, 'No project ID defined - either define a project ID manually or run the versioneye-create task'
-		def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
-		assert apiKey, 'No API key defined'
-		
-		def http = createHttpBuilder(project)
-    
-		http.request( Method.POST, ContentType.JSON ) { req ->
-		  uri.path = '/api/v2/projects/' + projectId
-		  uri.query = [ api_key: apiKey ]
-		  requestContentType = 'multipart/form-data'
-		  MultipartEntity entity = new MultipartEntity()
-		  entity.addPart("project_file", new FileBody(dependencies as File, 'pom.json', 'application/json', null))
-		  req.entity = entity
-		  
-		  response.success = {
-			  resp, json ->
-			  assert json, 'Invalid response'
-			  project.logger.lifecycle "Updated VersionEye project $json.name successfully"
-			  logResult(project, json)
-		  }
-		}
-	}
+
+  def dependencies
+
+  @TaskAction
+  def update() {
+    assert dependencies as File && (dependencies as File).exists()
+    def projectId = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
+    assert projectId, 'No project ID defined - either define a project ID manually or run the versioneye-create task'
+    def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
+    assert apiKey, 'No API key defined'
+
+    def http = createHttpBuilder(project)
+
+    http.request( Method.POST, ContentType.JSON ) { req ->
+      uri.path = '/api/v2/projects/' + projectId
+      uri.query = [ api_key: apiKey ]
+      requestContentType = 'multipart/form-data'
+      MultipartEntity entity = new MultipartEntity()
+      entity.addPart("project_file", new FileBody(dependencies as File, 'pom.json', 'application/json', null))
+      req.entity = entity
+
+      response.success = {
+        resp, json ->
+        assert json, 'Invalid response'
+        project.logger.lifecycle "Updated VersionEye project $json.name successfully"
+        logResult(project, json)
+      }
+    }
+  }
 
 }

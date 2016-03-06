@@ -45,58 +45,58 @@ import static Util.logResult
  * @author Simon Templer
  */
 class CreateTask extends DefaultTask {
-	
-	def dependencies
-	def properties
-	
-	@TaskAction
-	def create() {
-		File propertiesFile = properties as File 
-		assert propertiesFile
-		assert dependencies as File && (dependencies as File).exists()
-		def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
-		assert apiKey, 'No API key defined'
-		def keyAlreadyThere = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
-		assert !keyAlreadyThere, 'There is already a project ID defined, run versioneye-update to update the existing project instead'
-		
-		def http = createHttpBuilder(project)
-    
-		http.request( Method.POST, ContentType.JSON ) { req ->
-		  uri.path = '/api/v2/projects'
-		  uri.query = [ api_key: apiKey ]
-		  requestContentType = 'multipart/form-data'
-		  MultipartEntity entity = new MultipartEntity()
-		  entity.addPart("upload", new FileBody(dependencies as File, 'pom.json', 'application/json', null))
-		  req.entity = entity
-		  
-		  response.success = {
-			  resp, json ->
-			  // extract project ID
-			  assert json, 'Invalid response'
-			  def projectId = json.id
-			  assert projectId, 'Project ID could not be determined from response'
-			  project.logger.lifecycle "Project created with project ID $projectId"
-			  
-			  // save project key in properties
-			  Properties props = new Properties()
-			  if (propertiesFile.exists()) {
-				  propertiesFile.withReader {
-					  props.load(it)
-				  }
-			  }
-			  props.getProperty(VersionEyePlugin.PROP_PROJECT_ID)?.with {
-				  project.logger.warn "Replacing existing project ID $it in $propertiesFile"
-			  }
-			  props.setProperty(VersionEyePlugin.PROP_PROJECT_ID, projectId)
 
-			  propertiesFile.withWriter {
-				  props.store(it, null)
-			  }
-			  project.logger.warn 'Saved project ID to ' + propertiesFile.name 
-			  
-			  logResult(project, json)
-		  }
-		}
-	}
+  def dependencies
+  def properties
+
+  @TaskAction
+  def create() {
+    File propertiesFile = properties as File
+    assert propertiesFile
+    assert dependencies as File && (dependencies as File).exists()
+    def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
+    assert apiKey, 'No API key defined'
+    def keyAlreadyThere = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
+    assert !keyAlreadyThere, 'There is already a project ID defined, run versioneye-update to update the existing project instead'
+
+    def http = createHttpBuilder(project)
+
+    http.request( Method.POST, ContentType.JSON ) { req ->
+      uri.path = '/api/v2/projects'
+      uri.query = [ api_key: apiKey ]
+      requestContentType = 'multipart/form-data'
+      MultipartEntity entity = new MultipartEntity()
+      entity.addPart("upload", new FileBody(dependencies as File, 'pom.json', 'application/json', null))
+      req.entity = entity
+
+      response.success = {
+        resp, json ->
+        // extract project ID
+        assert json, 'Invalid response'
+        def projectId = json.id
+        assert projectId, 'Project ID could not be determined from response'
+        project.logger.lifecycle "Project created with project ID $projectId"
+
+        // save project key in properties
+        Properties props = new Properties()
+        if (propertiesFile.exists()) {
+          propertiesFile.withReader {
+            props.load(it)
+          }
+        }
+        props.getProperty(VersionEyePlugin.PROP_PROJECT_ID)?.with {
+          project.logger.warn "Replacing existing project ID $it in $propertiesFile"
+        }
+        props.setProperty(VersionEyePlugin.PROP_PROJECT_ID, projectId)
+
+        propertiesFile.withWriter {
+          props.store(it, null)
+        }
+        project.logger.warn 'Saved project ID to ' + propertiesFile.name
+
+        logResult(project, json)
+      }
+    }
+  }
 
 }

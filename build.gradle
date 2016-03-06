@@ -180,3 +180,19 @@ bintray { // task bintrayUpload
 	}
 
 }
+
+/*
+ * Eclipse configuration.
+ */
+eclipse {
+  jdt {
+    file {
+      withProperties { properties ->
+        properties['org.eclipse.jdt.core.formatter.indentation.size'] = '2'
+        properties['org.eclipse.jdt.core.formatter.tabulation.size'] = '2'
+        properties['org.eclipse.jdt.core.formatter.tabulation.char'] = 'space'
+      }
+    }
+  }
+}
+

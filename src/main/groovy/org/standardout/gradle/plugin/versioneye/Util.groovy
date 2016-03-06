@@ -45,14 +45,14 @@ class Util {
     }
     json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
     json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
-    
+
     // cache result for further analysis
     project.versioneye.lastVersionEyeResponse = json
-	}
-  
+  }
+
   static HTTPBuilder createHttpBuilder(Project project) {
     def http = new HTTPBuilder(project.versioneye.baseUrl)
-    
+
     http.handler.failure = { resp, data ->
       def msg = "Unexpected failure accessing VersionEye API: ${resp.statusLine}"
       if (data?.error) {
@@ -60,13 +60,13 @@ class Util {
       }
       fail(project, msg)
     }
-    
+
     http
   }
-  
+
   static void fail(Project project, String msg) {
     project.logger.error(msg)
     throw new GradleException(msg)
-  } 
+  }
 
 }

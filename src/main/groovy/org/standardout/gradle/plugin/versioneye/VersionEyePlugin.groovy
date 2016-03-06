@@ -44,52 +44,52 @@ import static Util.fail
  * @author Simon Templer
  */
 public class VersionEyePlugin implements Plugin<Project> {
-	
-	@Deprecated
-	public static final String PROP_PROJECT_KEY = 'versioneye.projectkey'
-	
-	public static final String PROP_PROJECT_ID = 'versioneye.projectid'
-	public static final String PROP_API_KEY = 'versioneye.api_key'
-	
-	private Project project
-	
-	private File dependenciesFile
-	
-	private File gradleProperties  
-	
-	@Override
-	public void apply(Project project) {
-		this.project = project
-		
-		// create extension
-		project.extensions.create('versioneye', VersionEyeExtension, project)
-		
-		// dependencies file to create
-		dependenciesFile = new File(project.buildDir, 'pom.json')
-		
-		// project specific properties file
-		gradleProperties = new File(project.projectDir, 'gradle.properties')
-		
-		// task creating the POM representation of the dependencies
-		Task jsonTask = project.task('versioneye-pom', type: PomTask) {
-			file = dependenciesFile
-		}
-		
-		// task creating a versioneye project
-		Task createTask = project.task('versioneye-create', type: CreateTask) {
-			dependencies = dependenciesFile
-			properties = gradleProperties
-		}
-		createTask.dependsOn(jsonTask)
-		
-		// task updating the version eye project
-		Task updateTask = project.task('versioneye-update', type: UpdateTask) {
-			dependencies = dependenciesFile
-		}
-		updateTask.dependsOn(jsonTask)
-    
+
+  @Deprecated
+  public static final String PROP_PROJECT_KEY = 'versioneye.projectkey'
+
+  public static final String PROP_PROJECT_ID = 'versioneye.projectid'
+  public static final String PROP_API_KEY = 'versioneye.api_key'
+
+  private Project project
+
+  private File dependenciesFile
+
+  private File gradleProperties
+
+  @Override
+  public void apply(Project project) {
+    this.project = project
+
+    // create extension
+    project.extensions.create('versioneye', VersionEyeExtension, project)
+
+    // dependencies file to create
+    dependenciesFile = new File(project.buildDir, 'pom.json')
+
+    // project specific properties file
+    gradleProperties = new File(project.projectDir, 'gradle.properties')
+
+    // task creating the POM representation of the dependencies
+    Task jsonTask = project.task('versioneye-pom', type: PomTask) {
+      file = dependenciesFile
+    }
+
+    // task creating a versioneye project
+    Task createTask = project.task('versioneye-create', type: CreateTask) {
+      dependencies = dependenciesFile
+      properties = gradleProperties
+    }
+    createTask.dependsOn(jsonTask)
+
+    // task updating the version eye project
+    Task updateTask = project.task('versioneye-update', type: UpdateTask) {
+      dependencies = dependenciesFile
+    }
+    updateTask.dependsOn(jsonTask)
+
     // Check tasks based on VersionEye response
-        
+
     Task licenseCheckTask = project.task('versionEyeLicenseCheck', dependsOn: updateTask).doFirst {
       def json = project.versioneye.lastVersionEyeResponse
       if (json.licenses_red) {
@@ -99,10 +99,10 @@ public class VersionEyePlugin implements Plugin<Project> {
         fail(project, "${json.licenses_unknown} components are without any license!")
       }
     }
-		
-		// task aliases using CamelCase (#4)
-		project.task('versionEyeCreate').dependsOn(createTask)
-		project.task('versionEyeUpdate').dependsOn(updateTask)
-	}
+
+    // task aliases using CamelCase (#4)
+    project.task('versionEyeCreate').dependsOn(createTask)
+    project.task('versionEyeUpdate').dependsOn(updateTask)
+  }
 
 }
