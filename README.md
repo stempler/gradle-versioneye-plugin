@@ -63,6 +63,10 @@ gradle -Pversioneye.api_key=1234567890abcdef -info versioneye-create
 Based on the information retrieved from VersionEye you can do a number of additional checks with the following tasks:
 
 * ***versionEyeLicenseCheck*** - Check if there are any violations of your license white list
+* ***versionEyeSecurityCheck*** - Check if there are any dependencies with known security vulnerabilities
+* ***versionEyeSecurityAndLicenseCheck*** - Check both security vulnerabilities and license violations
+
+Executing any of these tasks will update the project on VersionEye.
 
 
 ### Project configuration

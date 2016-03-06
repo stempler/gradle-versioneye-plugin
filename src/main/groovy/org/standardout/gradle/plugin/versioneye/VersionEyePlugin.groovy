@@ -99,6 +99,16 @@ public class VersionEyePlugin implements Plugin<Project> {
         fail(project, "${json.licenses_unknown} components are without any license!")
       }
     }
+    
+    Task securityCheckTask = project.task('versionEyeSecurityCheck', dependsOn: updateTask).doFirst {
+      def json = project.versioneye.lastVersionEyeResponse
+      if (json.sv_count) {
+        fail(project, "${json.sv_count} components have known security vulnerabilities!")
+      }
+    }
+    
+    Task securityAndLicenseCheckTask = project.task('versionEyeSecurityAndLicenseCheck',
+      dependsOn: [securityCheckTask, licenseCheckTask])
 
     // task aliases using CamelCase (#4)
     project.task('versionEyeCreate').dependsOn(createTask)
