@@ -72,24 +72,32 @@ public class VersionEyePlugin implements Plugin<Project> {
 
     // project specific properties file
     gradleProperties = new File(project.projectDir, 'gradle.properties')
+    
+    def groupName = 'VersionEye'
 
     // task creating the POM representation of the dependencies
     Task jsonTask = project.task('versioneye-pom', type: PomTask) {
       file = dependenciesFile
     }
+    jsonTask.description = 'Generate a pom.json file with the project\'s dependencies'
+    jsonTask.group = groupName
 
-    // task creating a versioneye project
+    // task creating a version eye project
     Task createTask = project.task('versioneye-create', type: CreateTask) {
       dependencies = dependenciesFile
       properties = gradleProperties
     }
     createTask.dependsOn(jsonTask)
+    createTask.description = 'Create a VersionEye project via the VersionEye API'
+    createTask.group = groupName
 
     // task updating the version eye project
     Task updateTask = project.task('versioneye-update', type: UpdateTask) {
       dependencies = dependenciesFile
     }
     updateTask.dependsOn(jsonTask)
+    updateTask.description = 'Update the associated VersionEye project via the VersionEye API'
+    updateTask.group = groupName
 
     // Check tasks based on VersionEye response
 
@@ -102,6 +110,8 @@ public class VersionEyePlugin implements Plugin<Project> {
         fail(project, "${json.licenses_unknown} dependencies are without any license!")
       }
     }
+    licenseCheckTask.description = 'Check license violations in project dependencies'
+    licenseCheckTask.group = groupName
     
     Task securityCheckTask = project.task('versionEyeSecurityCheck', dependsOn: updateTask).doFirst {
       def json = project.versioneye.lastVersionEyeResponse
@@ -109,13 +119,22 @@ public class VersionEyePlugin implements Plugin<Project> {
         fail(project, "${json.sv_count} dependencies have known security vulnerabilities!")
       }
     }
+    securityCheckTask.description = 'Check security vulnerabilities in project dependencies'
+    securityCheckTask.group = groupName
     
     Task securityAndLicenseCheckTask = project.task('versionEyeSecurityAndLicenseCheck',
       dependsOn: [securityCheckTask, licenseCheckTask])
+    securityAndLicenseCheckTask.description = 'Check security vulnerabilities and license violations'
+    securityAndLicenseCheckTask.group = groupName
 
     // task aliases using CamelCase (#4)
-    project.task('versionEyeCreate').dependsOn(createTask)
-    project.task('versionEyeUpdate').dependsOn(updateTask)
+    Task createAlias = project.task('versionEyeCreate').dependsOn(createTask)
+    createAlias.description = createTask.description + ' (Alias for original task)'
+    createAlias.group = groupName
+    
+    Task updateAlias = project.task('versionEyeUpdate').dependsOn(updateTask)
+    updateAlias.description = updateTask.description  + ' (Alias for original task)'
+    updateAlias.group = groupName
   }
 
 }
