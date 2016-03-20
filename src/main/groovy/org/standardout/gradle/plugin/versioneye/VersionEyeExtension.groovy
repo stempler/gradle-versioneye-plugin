@@ -32,32 +32,32 @@ import org.gradle.api.Project;
  * @author Simon Templer
  */
 class VersionEyeExtension {
-	
-	// dependencies values
-	public static final String transitive = 'transitive'
-	public static final String declared = 'declared'
-	
-	final Project project
-	
-	VersionEyeExtension(Project project) {
-		this.project = project
-	}
-	
-	/**
-	 * States which dependencies are analyzed - only the defined or all resolved dependencies.
-	 */
-	String dependencies = declared
-	
-	/**
-	 * Configuration to exclude when calculating the dependencies.
-	 */
-	final Set<String> excludeConfigurations = new HashSet<String>()
-  
+
+  // dependencies values
+  public static final String transitive = 'transitive'
+  public static final String declared = 'declared'
+
+  final Project project
+
+  VersionEyeExtension(Project project) {
+    this.project = project
+  }
+
+  /**
+   * States which dependencies are analyzed - only the defined or all resolved dependencies.
+   */
+  String dependencies = declared
+
+  /**
+   * Configuration to exclude when calculating the dependencies.
+   */
+  final Set<String> excludeConfigurations = new HashSet<String>()
+
   /**
    * If the license check should fail when unknown licenses are encountered. 
    */
   boolean licenseCheckBreakByUnknown = false
-  
+
   /**
    * If Gradle plugins should be included in the dependencies.
    * 
@@ -65,30 +65,30 @@ class VersionEyeExtension {
    * configurations.
    */
   boolean includePlugins = true
-	
-	/**
-	 * Specify configurations to exclude.
-	 */
-	void exclude(String... configs) {
-		(configs as List).each {
-			excludeConfigurations << it
-		}
-	}
-	
-	/**
-	 * Base URL of the VersionEye API.
-	 */
-	String baseUrl = 'https://www.versioneye.com'
-  
-	// internal
-	
-	/**
-	 * Test if the given configuration should be excluded.
-	 */
-	boolean acceptConfiguration(String name) {
-		!excludeConfigurations.contains(name)
-	}
-  
+
+  /**
+   * Specify configurations to exclude.
+   */
+  void exclude(String... configs) {
+    (configs as List).each {
+      excludeConfigurations << it
+    }
+  }
+
+  /**
+   * Base URL of the VersionEye API.
+   */
+  String baseUrl = 'https://www.versioneye.com'
+
+  // internal
+
+  /**
+   * Test if the given configuration should be excluded.
+   */
+  boolean acceptConfiguration(String name) {
+    !excludeConfigurations.contains(name)
+  }
+
   /**
    * Cache the response received from VersionEye with create or update.
    */
