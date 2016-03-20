@@ -28,6 +28,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
+import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskAction;
@@ -50,61 +51,52 @@ class PomTask extends DefaultTask {
   private static final ExternalDependencySpec EXTERNAL_DEPENDENCY = new ExternalDependencySpec()
 
   def file
-
+  
   @TaskAction
   def create() {
     assert file as File
+    
+    // map of artifacts/dependencies to the respective configurations
+    Map dependencyMap = [:]
 
-    def artifacts
-    if (project.versioneye.dependencies == VersionEyeExtension.transitive) {
-      // transitive dependencies: use all resolved artifacts
-
-      artifacts = project.configurations.names.collect { String name ->
-        // check if configuration should be included
-        if (project.versioneye.acceptConfiguration(name)) {
-          def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
-          // retrieve all external dependencies
-          //XXX we are ignoring the dependency relations here - does it matter for VersionEye?
-          resolvedConfig.lenientConfiguration.getArtifacts(EXTERNAL_DEPENDENCY)
-        }
-        else []
-      }.flatten() as Set
+    // project dependencies
+    project.configurations.names.collect { String name ->
+      // check if configuration should be included
+      if (project.versioneye.acceptConfiguration(name)) {
+        ResolvedConfiguration config = project.configurations.getByName(name).resolvedConfiguration
+        addDependenciesToMap(name, config, dependencyMap)
+      }
+    }
+    
+    // project plugins
+    project.buildscript.configurations.names.collect { String name ->
+      //XXX are there any build script configurations that should not be included?
+      ResolvedConfiguration config = project.buildscript.configurations.getByName(name).resolvedConfiguration
+      addDependenciesToMap(name, config, dependencyMap, 'plugin')
     }
 
-    def deps
-    if (project.versioneye.dependencies == VersionEyeExtension.declared) {
-      // declared dependencies: only use first level dependencies
-
-      deps = project.configurations.names.collect { String name ->
-        // check if configuration should be included
-        if (project.versioneye.acceptConfiguration(name)) {
-          def resolvedConfig = project.configurations.getByName(name).resolvedConfiguration
-          // retrieve all external first level dependencies
-          resolvedConfig.lenientConfiguration.getFirstLevelModuleDependencies(EXTERNAL_DEPENDENCY)
-        }
-        else []
-      }.flatten() as Set
-    }
-
+    // build dependency list for
     def dependencyList = []
-
-    // artifacts
-    artifacts?.each { ResolvedArtifact artifact ->
-      dependencyList << [
-        name: "${artifact.moduleVersion.id.group}:${artifact.moduleVersion.id.name}",
-        version: artifact.moduleVersion.id.version,
-        //TODO scope
-        scope: 'compile' //FIXME until it is clear what to use, use fixed value
-      ]
-    }
-    // deps
-    deps?.each { ResolvedDependency dep ->
-      dependencyList << [
-        name: "${dep.moduleGroup}:${dep.moduleName}",
-        version: dep.moduleVersion,
-        //TODO scope
-        scope: 'compile' //FIXME until it is clear what to use, use fixed value
-      ]
+    dependencyMap.each { dependency, Set<String> configs ->
+      Iterable<String> scopes = determineScopes(configs)
+      scopes.each { scope ->
+        if (dependency instanceof ResolvedArtifact) {
+          ResolvedArtifact artifact = dependency
+          dependencyList << [
+            name: "${artifact.moduleVersion.id.group}:${artifact.moduleVersion.id.name}",
+            version: artifact.moduleVersion.id.version,
+            scope: scope
+          ]
+        }
+        else if (dependency instanceof ResolvedDependency) {
+          ResolvedDependency dep = dependency
+          dependencyList << [
+            name: "${dep.moduleGroup}:${dep.moduleName}",
+            version: dep.moduleVersion,
+            scope: scope
+          ]
+        }
+      }
     }
 
     // create the pom.json descriptor
@@ -123,6 +115,72 @@ class PomTask extends DefaultTask {
       }
       pom.writeTo(w)
     }
+  }
+  
+  // helper methods
+  
+  def addDependenciesToMap(String configName, ResolvedConfiguration resolvedConfig, Map dependencyMap,
+    String scope = null) {
+    def deps
+    if (project.versioneye.dependencies == VersionEyeExtension.transitive) {
+      // transitive dependencies: use all resolved artifacts
+      
+      // retrieve all external dependencies
+      //XXX we are ignoring the dependency relations here - does it matter for VersionEye?
+      deps = resolvedConfig.lenientConfiguration.getArtifacts(EXTERNAL_DEPENDENCY)
+    }
+    else if (project.versioneye.dependencies == VersionEyeExtension.declared) {
+      // declared dependencies: only use first level dependencies
+      deps = resolvedConfig.lenientConfiguration.getFirstLevelModuleDependencies(EXTERNAL_DEPENDENCY)
+    }
+    else {
+      deps = []
+    }
+    deps.each { dep ->
+      // put in map with configuration name / scope
+      Set configSet = dependencyMap.get(dep)
+      if (configSet == null) {
+        configSet = new HashSet<>()
+        dependencyMap.put(dep, configSet)
+      }
+      if (scope) {
+        // fixed scope independent of configuration name
+        configSet.add(scope)
+      }
+      else {
+        configSet.add(configName)
+      }
+    }
+  }
+  
+  Iterable<String> determineScopes(Set<String> configs) {
+    Set<String> result = new HashSet<>()
+    
+    // plugin scope
+    if (configs.remove('plugin')) {
+      result.add('plugin')
+    }
+    
+    // best guess based on standard configuration names like for example in the Java plugin
+    
+    // prefer compile...
+    if (configs.any { it.startsWith('compile') }) {
+      result.add('compile')
+    }
+    // ...before test...
+    else if (configs.any { it.startsWith('test') }) {
+      result.add('test')
+    }
+    // ...before runtime...
+    else if (configs.any { it.startsWith('runtime') }) {
+      result.add('runtime')
+    }
+    // ...otherwise just use configuration names
+    else {
+      result.addAll(configs)
+    }
+    
+    result
   }
 
 }
