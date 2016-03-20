@@ -69,10 +69,12 @@ class PomTask extends DefaultTask {
     }
     
     // project plugins
-    project.buildscript.configurations.names.collect { String name ->
-      //XXX are there any build script configurations that should not be included?
-      ResolvedConfiguration config = project.buildscript.configurations.getByName(name).resolvedConfiguration
-      addDependenciesToMap(name, config, dependencyMap, 'plugin')
+    if (project.versioneye.includePlugins) {
+      project.buildscript.configurations.names.collect { String name ->
+        //XXX are there any build script configurations that should not be included?
+        ResolvedConfiguration config = project.buildscript.configurations.getByName(name).resolvedConfiguration
+        addDependenciesToMap(name, config, dependencyMap, 'plugin')
+      }
     }
 
     // build dependency list for

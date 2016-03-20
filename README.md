@@ -115,7 +115,15 @@ versioneye {
 
 Please note that if you exclude a configuration that is extended by another configuration that you did not exclude, this will have no effect (e.g. if you exclude *runtime* but don't exclude *testRuntime*).
 
-**Tip:** If there are dependencies showing up you have no idea where they are coming from, use `gradle -q dependencies` to get an overview of all configurations and the dependencies contained in them. Use it to identifiy the configurations that you don't want to include.
+**Tip:** If there are dependencies showing up you have no idea where they are coming from, use `gradle dependencies` to get an overview of all configurations and the dependencies contained in them. Use it to identifiy the configurations that you don't want to include.
+
+Since version 1.3, the plugins that you use for your build script are also included in the dependencies reported to VersionEye. If you don't want that, you can disable this feature in the configuration:
+
+```groovy
+versioneye {
+  includePlugins = false
+}
+```
 
 
 #### Unknown licenses

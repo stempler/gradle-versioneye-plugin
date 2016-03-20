@@ -57,6 +57,14 @@ class VersionEyeExtension {
    * If the license check should fail when unknown licenses are encountered. 
    */
   boolean licenseCheckBreakByUnknown = false
+  
+  /**
+   * If Gradle plugins should be included in the dependencies.
+   * 
+   * Gradle plugin dependencies are determined via the build script dependency
+   * configurations.
+   */
+  boolean includePlugins = true
 	
 	/**
 	 * Specify configurations to exclude.
