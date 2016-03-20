@@ -105,5 +105,24 @@ class Util {
     }
     project.logger.warn 'Saved project ID to ' + propertiesFile.name
   }
+  
+  static String getApiKey(Project project) {
+    def key = null
+    // try Gradle property first
+    if (project.hasProperty(VersionEyePlugin.PROP_API_KEY)) {
+      key = project.properties[VersionEyePlugin.PROP_API_KEY]
+    }
+    // try environment variable
+    else {
+      key = System.getenv('VERSIONEYE_API_KEY')
+    }
+    
+    assert key, 'No API key defined'
+    
+    // just in case
+    key = key.trim()
+    
+    key
+  }
 
 }

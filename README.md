@@ -35,13 +35,18 @@ apply plugin: 'org.standardout.versioneye'
 
 ### API key
 
-You need to provide your [VersionEye](https://www.versioneye.com) API key for the plugin to be able to communicate with the VersionEye API. You do this through a property, e.g. by specifying it in the **gradle.properties** file in **~/.gradle/** or the project directory, or via the command line. However, it is strongly recommended not to place it somewhere where it is publicly accessible (e.g. in a public GitHub repository).
+You need to provide your [VersionEye](https://www.versioneye.com) API key for the plugin to be able to communicate with the VersionEye API. You do this through a Gradle property, e.g. by specifying it in the **gradle.properties** file in **~/.gradle/** or the project directory, or via the command line. However, it is strongly recommended not to place it somewhere where it is publicly accessible (e.g. in a public GitHub repository).
 
 ```
 versioneye.api_key=1234567890abcdef
 ```
 
 If logged in to VersionEye, you can get or generate your API key [here](https://www.versioneye.com/settings/api).
+
+
+#### Environment variable
+
+Starting from version 1.3, if no Gradle property for the API key is defined, the plugin will fall back to the value found in the `VERSIONEYE_API_KEY` environment variable.
 
 
 ### Gradle tasks

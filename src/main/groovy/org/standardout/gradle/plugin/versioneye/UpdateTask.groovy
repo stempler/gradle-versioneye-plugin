@@ -53,9 +53,8 @@ class UpdateTask extends DefaultTask {
     assert dependencies as File && (dependencies as File).exists()
     def projectId = project.properties[VersionEyePlugin.PROP_PROJECT_ID]
     assert projectId, 'No project ID defined - either define a project ID manually or run the versioneye-create task'
-    def apiKey = project.properties[VersionEyePlugin.PROP_API_KEY]
-    assert apiKey, 'No API key defined'
-
+    def apiKey = getApiKey(project)
+    
     def http = createHttpBuilder(project)
 
     http.request( Method.POST, ContentType.JSON ) { req ->
