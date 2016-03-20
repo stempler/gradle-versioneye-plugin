@@ -1,3 +1,15 @@
+### 1.3.0
+
+ - Added tasks for security and license checks
+ - Support association to an organisation and team when creating a VersionEye project
+ - Don't override comments in `gradle.properties` when creating a VersionEye project
+ - Support for determining dependencies to Gradle plugins
+ - Generate a `pom.json` instead of a `pom.xml` for upload to VersionEye
+ - Derive dependency scopes from dependency configuration names
+ - Define API key via `VERSIONEYE_API_KEY` environment variable (only if Gradle property is not defined)
+ - Added plugin task group and task descriptions
+ - Improved error reporting for failed requests to the VersionEye API
+
 ### 1.2.0
 
  - Support customizing base URL for use with VersionEye Enterprise
