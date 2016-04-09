@@ -153,6 +153,39 @@ versioneye {
 ```
 
 
+#### Dependency scopes
+
+The dependency scope in VersionEye is used to organize dependencies in different groups, for instance compile time dependencies or test dependencies.
+
+Your project dependencies in Gradle are organised in dependency configurations, for instance in most projects there is a `compile` configuration. The dependency scope is determined based on the information in which configurations it is present.
+The default strategy tries to identify the primary configuration of a dependency and use that as a scope.
+This works best for standard project setups, so if you feel that you can provide a more optimal grouping, you can provide your own implementation.
+
+The `DEFAULT` strategy is configured if you do not override the setting. Another provided strategy is the `CONFIGURATIONS` strategy.
+It uses the configuration associations as is. You can enable it like this:
+
+```groovy
+versioneye {
+  determineScopeStrategy = CONFIGURATIONS
+}
+```
+
+You can provide your own implementation by providing a closure that calculates an Iterable of scope names from the Set of configuration names.
+Build script dependencies here have the configuration name `'plugin'` associated.
+
+```groovy
+versioneye {
+  determineScopeStrategy = { Set<String> configs ->
+    def scopes = []
+
+    //TODO determine scopes based on the configuration names
+
+    scopes
+  }
+}
+```
+
+
 License
 -----
 

@@ -156,33 +156,10 @@ class PomTask extends DefaultTask {
   }
   
   Iterable<String> determineScopes(Set<String> configs) {
-    Set<String> result = new HashSet<>()
-    
-    // plugin scope
-    if (configs.remove('plugin')) {
-      result.add('plugin')
-    }
-    
-    // best guess based on standard configuration names like for example in the Java plugin
-    
-    // prefer compile...
-    if (configs.any { it.startsWith('compile') }) {
-      result.add('compile')
-    }
-    // ...before test...
-    else if (configs.any { it.startsWith('test') }) {
-      result.add('test')
-    }
-    // ...before runtime...
-    else if (configs.any { it.startsWith('runtime') }) {
-      result.add('runtime')
-    }
-    // ...otherwise just use configuration names
-    else {
-      result.addAll(configs)
-    }
-    
-    result
+    // create copy that is safe to be manipulated
+    Set<String> copy = new HashSet<>(configs)
+    // delegate to strategy configured in extension
+    project.versioneye.determineScopeStrategy.call(copy)
   }
 
 }
