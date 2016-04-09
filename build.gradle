@@ -45,7 +45,7 @@ dependencies {
 		exclude group: 'com.google.appengine'
 		exclude group: 'xerces', module: 'xercesImpl'
 	}
-	compile 'org.apache.httpcomponents:httpmime:4.3.3'
+	compile 'org.apache.httpcomponents:httpmime:4.5.2'
 	compile localGroovy()
 }
 
