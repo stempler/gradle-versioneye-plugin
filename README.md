@@ -186,6 +186,26 @@ versioneye {
 ```
 
 
+### Using the current SNAPSHOT
+
+If you want to test the latest version with changes that have not been released yet, you can configure your project to use the latest SNAPSHOT:
+
+```groovy
+buildscript {
+  repositories {
+    maven {
+      url 'http://oss.sonatype.org/content/repositories/snapshots/'
+    }
+  }
+  dependencies {
+    classpath 'org.standardout:gradle-versioneye-plugin:1.4.0-SNAPSHOT'
+  }
+}
+
+apply plugin: 'org.standardout.versioneye'
+```
+
+
 License
 -----
 
