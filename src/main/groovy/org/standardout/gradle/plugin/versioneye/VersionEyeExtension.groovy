@@ -67,6 +67,11 @@ class VersionEyeExtension {
    * configurations.
    */
   boolean includePlugins = true
+  
+  /**
+   * If dependencies from sub-projects should be included. 
+   */
+  boolean includeSubProjects = false
 
   /**
    * Specify configurations to exclude.

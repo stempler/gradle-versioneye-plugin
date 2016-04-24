@@ -131,6 +131,17 @@ versioneye {
 ```
 
 
+##### Multi-project builds (since 1.4)
+
+If you have a multi-build project that you want to handle as one single VersionEye project, you should apply the plugin only to the root project and configure the plugin to include dependencies from sub-projects as well:
+
+```groovy
+versioneye {
+  includeSubProjects = true
+}
+```
+
+
 #### Unknown licenses
 
 If you want the license check to fail when dependencies with unknown license are encountered, you need to enable it in the configuration like this:

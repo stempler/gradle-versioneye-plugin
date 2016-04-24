@@ -1,3 +1,7 @@
+### 1.4.0
+
+ - Support for including sub-project dependencies
+
 ### 1.3.0
 
  - Added tasks for security and license checks

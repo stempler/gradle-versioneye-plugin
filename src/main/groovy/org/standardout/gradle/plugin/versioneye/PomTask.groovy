@@ -25,6 +25,7 @@
 package org.standardout.gradle.plugin.versioneye
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ResolvedArtifact
@@ -58,22 +59,37 @@ class PomTask extends DefaultTask {
     
     // map of artifacts/dependencies to the respective configurations
     Map dependencyMap = [:]
+    
+    // determine projects for which to include dependencies
+    def depProjects
+    if (project.versioneye.includeSubProjects) {
+      // project and sub-projects
+      depProjects = project.allprojects
+    }
+    else {
+      // only the main project
+      depProjects = [project]
+    }
 
     // project dependencies
-    project.configurations.names.collect { String name ->
-      // check if configuration should be included
-      if (project.versioneye.acceptConfiguration(name)) {
-        ResolvedConfiguration config = project.configurations.getByName(name).resolvedConfiguration
-        addDependenciesToMap(name, config, dependencyMap)
+    depProjects.each { Project depProject ->
+      depProject.configurations.names.collect { String name ->
+        // check if configuration should be included
+        if (project.versioneye.acceptConfiguration(name)) {
+          ResolvedConfiguration config = depProject.configurations.getByName(name).resolvedConfiguration
+          addDependenciesToMap(name, config, dependencyMap)
+        }
       }
     }
     
     // project plugins
     if (project.versioneye.includePlugins) {
-      project.buildscript.configurations.names.collect { String name ->
-        //XXX are there any build script configurations that should not be included?
-        ResolvedConfiguration config = project.buildscript.configurations.getByName(name).resolvedConfiguration
-        addDependenciesToMap(name, config, dependencyMap, 'plugin')
+      depProjects.each { Project depProject ->
+        depProject.buildscript.configurations.names.collect { String name ->
+          //XXX are there any build script configurations that should not be included?
+          ResolvedConfiguration config = depProject.buildscript.configurations.getByName(name).resolvedConfiguration
+          addDependenciesToMap(name, config, dependencyMap, 'plugin')
+        }
       }
     }
 
