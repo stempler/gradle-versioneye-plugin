@@ -207,6 +207,7 @@ buildscript {
     maven {
       url 'http://oss.sonatype.org/content/repositories/snapshots/'
     }
+    jcenter()
   }
   dependencies {
     classpath 'org.standardout:gradle-versioneye-plugin:1.4.0-SNAPSHOT'
