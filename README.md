@@ -210,7 +210,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'org.standardout:gradle-versioneye-plugin:1.4.0-SNAPSHOT'
+    classpath 'org.standardout:gradle-versioneye-plugin:1.5.0-SNAPSHOT'
   }
 }
 
