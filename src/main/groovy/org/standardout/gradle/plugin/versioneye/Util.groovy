@@ -40,7 +40,7 @@ class Util {
       if (it.outdated) {
         project.logger.lifecycle "Consider updating $it.name from $it.version_requested to $it.version_current"
       } else if (!it.unknown) {
-        project.logger.lifecycle "$it.name is up-to-date"
+        project.logger.info "$it.name is up-to-date"
       }
     }
     json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
