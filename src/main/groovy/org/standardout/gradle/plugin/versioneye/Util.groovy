@@ -45,7 +45,8 @@ class Util {
     }
     json.dep_number?.with{ project.logger.lifecycle "$it dependencies overall" }
     json.out_number?.with{ project.logger.lifecycle "$it outdated dependencies" }
-
+    json.unknown_number_sum?.with{ if (it > 0) project.logger.lifecycle "$it unknown dependencies" }
+	
     // cache result for further analysis
     project.versioneye.lastVersionEyeResponse = json
   }
