@@ -57,6 +57,23 @@ class PomTask extends DefaultTask {
   def create() {
     assert file as File
     
+    def resolveConfig = { config ->
+      ResolvedConfiguration result
+      
+      boolean canBeResolved = true
+      try {
+        canBeResolved = config.canBeResolved
+      } catch (e) {
+        // ignore - this property was added in Gradle 3.4
+      }
+      
+      if (canBeResolved) {
+        result = config.resolvedConfiguration
+      }
+      
+      result
+    }
+    
     // map of artifacts/dependencies to the respective configurations
     Map dependencyMap = [:]
     
@@ -76,8 +93,10 @@ class PomTask extends DefaultTask {
       depProject.configurations.names.collect { String name ->
         // check if configuration should be included
         if (project.versioneye.acceptConfiguration(name)) {
-          ResolvedConfiguration config = depProject.configurations.getByName(name).resolvedConfiguration
-          addDependenciesToMap(name, config, dependencyMap)
+          ResolvedConfiguration config = resolveConfig(depProject.configurations.getByName(name))
+          if (config) {
+            addDependenciesToMap(name, config, dependencyMap)
+          }
         }
       }
     }
@@ -87,8 +106,10 @@ class PomTask extends DefaultTask {
       depProjects.each { Project depProject ->
         depProject.buildscript.configurations.names.collect { String name ->
           //XXX are there any build script configurations that should not be included?
-          ResolvedConfiguration config = depProject.buildscript.configurations.getByName(name).resolvedConfiguration
-          addDependenciesToMap(name, config, dependencyMap, 'plugin')
+          ResolvedConfiguration config = resolveConfig(depProject.buildscript.configurations.getByName(name))
+          if (config) {
+            addDependenciesToMap(name, config, dependencyMap, 'plugin')
+          }
         }
       }
     }
