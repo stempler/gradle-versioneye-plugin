@@ -25,6 +25,11 @@
 package org.standardout.gradle.plugin.versioneye
 
 import groovyx.net.http.HTTPBuilder
+
+import java.net.Proxy
+
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 
@@ -50,10 +55,46 @@ class Util {
     // cache result for further analysis
     project.versioneye.lastVersionEyeResponse = json
   }
+  
+  static Proxy getProxy(String url, Project project) {
+    def proxies
+    try {
+      proxies = ProxySelector.getDefault().select(URI.create(url));
+      
+      return proxies?.find { proxy ->
+        proxy.type() == Proxy.Type.HTTP
+      }
+    } catch (e) {
+      project.logger.error('Error determining proxy', e)
+      return null
+    }
+  }
 
   static HTTPBuilder createHttpBuilder(Project project) {
     def http = new HTTPBuilder(project.versioneye.baseUrl)
+    
+    // proxy configuration
+    def proxy = getProxy(project.versioneye.baseUrl, project)
+    
+    if (proxy) {
+      InetSocketAddress proxyAddress = (InetSocketAddress) proxy.address()
+      
+      // set the proxy
+      def proxyHost = proxyAddress.getHostName()
+      def proxyPort = proxyAddress.getPort()
+      http.setProxy(proxyHost, proxyPort, 'http')
+      
+      String user = System.getProperty('http.proxyUser')
+      String password = System.getProperty('http.proxyPassword')
+      if (user) {
+        http.client.getCredentialsProvider().setCredentials(
+          new AuthScope(proxyHost, proxyPort),
+          new UsernamePasswordCredentials(user, password)
+        )
+      }
+    }
 
+    // failure handler
     http.handler.failure = { resp, data ->
       def msg = "Unexpected failure accessing VersionEye API: ${resp.statusLine}"
       if (data?.error) {

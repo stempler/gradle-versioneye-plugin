@@ -1,3 +1,8 @@
+### 1.5.0
+
+ - Fix problems with unresolvable configurations introduced in Gradle 3.4
+ - Add support for connecting to VersionEye via a proxy
+
 ### 1.4.0
 
  - Support for including sub-project dependencies
