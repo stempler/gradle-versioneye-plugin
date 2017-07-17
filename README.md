@@ -7,6 +7,11 @@ It works quite similar to the [VersionEye plugin for Maven](https://github.com/v
 
 [![Dependency Status](https://www.versioneye.com/java/org.standardout:gradle-versioneye-plugin/badge.svg)](https://www.versioneye.com/java/org.standardout:gradle-versioneye-plugin)
 
+Minimum Requirement
+-----
+
+The VersionEye servers are using [LetsEncrypt](https://letsencrypt.org/) for SSL certificates. Old Java versions don't support that certificate. The minimum required version is 8u101. More details on [StackOverflow](https://stackoverflow.com/questions/34110426/does-java-support-lets-encrypt-certificates/34111150#34111150).
+
 Usage
 -----
 
