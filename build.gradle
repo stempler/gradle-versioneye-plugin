@@ -2,17 +2,21 @@
 buildscript {
 	repositories {
 		jcenter()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
 	}
 	dependencies {
 		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+		classpath 'org.standardout:gradle-eclipseconfig:1.1.0'
 	}
 }
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'eclipse'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'org.standardout.eclipseconfig' // applies 'eclipse' plugin automatically
 
 repositories {
 	mavenCentral()
@@ -40,7 +44,7 @@ dependencies {
 		exclude group: 'oauth.signpost', module: 'signpost-commonshttp4'
 		// Add this dependency if you are using OAuth in HttpURLClient
 		exclude group: 'oauth.signpost', module: 'signpost-core'
-		
+
 		// try to do without
 		exclude group: 'com.google.appengine'
 		exclude group: 'xerces', module: 'xercesImpl'
@@ -75,36 +79,36 @@ artifacts {
 def configurePom(def pom) {
 	// ensure correct artifact ID
 	pom.artifactId = 'gradle-versioneye-plugin'
-	
+
 	// pom file details
 	pom.project {
-	   name 'gradle-versioneye-plugin'
-	   packaging 'jar'
-	   description 'Check your Gradle project dependencies with www.versioneye.com'
-	   url 'https://github.com/stempler/gradle-versioneye-plugin'
+		 name 'gradle-versioneye-plugin'
+		 packaging 'jar'
+		 description 'Check your Gradle project dependencies with www.versioneye.com'
+		 url 'https://github.com/stempler/gradle-versioneye-plugin'
 
-	   scm {
-		   url 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
-		   connection 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
-		   developerConnection 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
-	   }
+		 scm {
+			 url 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
+			 connection 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
+			 developerConnection 'scm:git:https://github.com/stempler/gradle-versioneye-plugin.git'
+		 }
 
-	   licenses {
-		   license {
-			   name 'The MIT License (MIT)'
-			   url 'http://opensource.org/licenses/MIT'
-			   distribution 'repo'
-		   }
-	   }
+		 licenses {
+			 license {
+				 name 'The MIT License (MIT)'
+				 url 'http://opensource.org/licenses/MIT'
+				 distribution 'repo'
+			 }
+		 }
 
-	   developers {
-		   developer {
-			   id 'stempler'
-			   name 'Simon Templer'
-			   email 'simon@templer.cc'
-		   }
-	   }
-   }
+		 developers {
+			 developer {
+				 id 'stempler'
+				 name 'Simon Templer'
+				 email 'simon@templer.cc'
+			 }
+		 }
+	 }
 }
 
 install {
@@ -125,7 +129,7 @@ uploadArchives {
 		mavenDeployer {
 			// sign artifacts before upload
 			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-			
+
 			// upload to sonatype OSS (snapshot/release)
 			repository(url: this.version.endsWith('-SNAPSHOT') ?
 					'https://oss.sonatype.org/content/repositories/snapshots' :
@@ -133,7 +137,7 @@ uploadArchives {
 				authentication(userName: this.hasProperty('sonatypeUsername') ? sonatypeUsername : '',
 					password: this.hasProperty('sonatypePassword') ? sonatypePassword : '')
 			}
-			
+
 			configurePom(pom)
 		}
 	}
@@ -158,7 +162,7 @@ bintray { // task bintrayUpload
 	key = project.getProperty('bintrayApiKey')
 
 	configurations = ['archives']
-	
+
 	dryRun = false
 	publish = !project.version.endsWith('-SNAPSHOT')
 	pkg {
@@ -180,19 +184,3 @@ bintray { // task bintrayUpload
 	}
 
 }
-
-/*
- * Eclipse configuration.
- */
-eclipse {
-  jdt {
-    file {
-      withProperties { properties ->
-        properties['org.eclipse.jdt.core.formatter.indentation.size'] = '2'
-        properties['org.eclipse.jdt.core.formatter.tabulation.size'] = '2'
-        properties['org.eclipse.jdt.core.formatter.tabulation.char'] = 'space'
-      }
-    }
-  }
-}
-
