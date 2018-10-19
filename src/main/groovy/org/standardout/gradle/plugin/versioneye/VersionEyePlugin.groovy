@@ -116,6 +116,9 @@ public class VersionEyePlugin implements Plugin<Project> {
     Task securityCheckTask = project.task('versionEyeSecurityCheck', dependsOn: updateTask).doFirst {
       def json = project.versioneye.lastVersionEyeResponse
       if (json.sv_count) {
+        json.dependencies?.findAll { it.security_vulnerabilities != null }.each {
+          project.logger.error("Security vulnerability in $it.name: $it.security_vulnerabilities\n")
+        }
         fail(project, "${json.sv_count} dependencies have known security vulnerabilities!")
       }
     }
